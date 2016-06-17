@@ -4,7 +4,17 @@ import tensorflow as tf
 import numpy as np
 
 trX = np.linspace(-1, 1, 101)
+# trX is a numpy.ndarray of shape (101,)
+# trX.shape=(101,), shape : tuple of ints
+
+# xxx print(typeof trX)
+print(type(trX))
+
 trY = 2 * trX + np.random.randn(*trX.shape) * 0.33 # create a y value which is approximately linear but with some random noise
+print(trX.shape)
+print(trY.shape)
+
+#exit()
 
 X = tf.placeholder("float") # create symbolic variables
 Y = tf.placeholder("float")
@@ -26,8 +36,9 @@ with tf.Session() as sess:
     # you need to initialize variables (in this case just variable W)
     tf.initialize_all_variables().run()
 
-    for i in range(100):
+    for i in range(2):
         for (x, y) in zip(trX, trY):
+            #print(x,y)
             sess.run(train_op, feed_dict={X: x, Y: y})
 
     print(sess.run(w))  # It should be something around 2
