@@ -1,3 +1,8 @@
+type
+dtype
+
+
+
 tensorflow optimizer
 
 http://learningtensorflow.com/lesson7/
