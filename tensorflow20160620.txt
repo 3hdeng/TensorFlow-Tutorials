@@ -1,0 +1,132 @@
+//=== 
+tf.nn.softmax_cross_entropy_with_logits
+-->  https://www.tensorflow.org/versions/r0.9/api_docs/python/nn.html
+
+
+* tf.nn.softmax(logits, name=None)
+
+Args:
+
+logits: A Tensor. Must be one of the following types: half, float32, float64. 
+        2-D with shape [batch_size, num_classes].
+name:  A name for the operation (optional).
+
+
+Returns:
+A Tensor. Has the same type as logits. Same shape as logits.
+
+
+For each batch i and class j we have
+
+softmax[i, j] = exp(logits[i, j]) / sum(exp(logits[i]))
+
+
+//===
+tf.nn.softmax_cross_entropy_with_logits(logits, labels, name=None)
+
+Computes softmax cross entropy between logits and labels.
+
+Measures the probability error in discrete classification tasks in which 
+the classes are mutually exclusive (each entry is in exactly one class). 
+For example, each CIFAR-10 image is labeled with one and only one label: 
+an image can be a dog or a truck, but not both.
+
+NOTE: While the classes are mutually exclusive, their probabilities need not be. 
+All that is required is that each row of labels is a valid probability distribution. 
+If they are not, the computation of the gradient will be incorrect.
+
+If using exclusive labels (wherein one and only one class is true at a time), see sparse_softmax_cross_entropy_with_logits.
+
+WARNING: This op expects unscaled logits, since it performs a softmax on logits internally for efficiency. 
+Do not call this op with the output of softmax, as it will produce incorrect results.
+
+logits and labels must have the same shape [batch_size, num_classes] and the same type (either float32 or float64).
+
+
+Args:
+
+logits: Unscaled log probabilities.
+labels: Each row labels[i] must be a valid probability distribution.
+name: A name for the operation (optional).
+
+
+Returns:
+A 1-D Tensor of length batch_size of the same type as logits with the softmax cross entropy loss.
+
+
+//===
+for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
+
+0, 128, 256, ... , 4096-128, 4096
+128, 256, 384, .... , 4096 (one element less than above)
+
+--> (start,end)= (0,128),(128, 256), .... (4096-128, 4096)
+
+
+//=== https://www.tensorflow.org/versions/r0.9/api_docs/python/train.html#GradientDescentOptimizer
+ tf.train.GradientDescentOptimizer(0.05).minimize(cost) 
+ 
+ tf.train.GradientDescentOptimizer.__init__(learning_rate, use_locking=False, name='GradientDescent')
+
+Construct a new gradient descent optimizer.
+
+Args:
+
+learning_rate: A Tensor or a floating point value. The learning rate to use.
+use_locking: If True use locks for update operations.
+name: Optional name prefix for the operations created when applying gradients. Defaults to "GradientDescent".
+
+
+Processing gradients before applying them.
+
+Calling minimize() takes care of both computing the gradients and applying them to the variables. If you want to process the gradients before applying them you can instead use the optimizer in three steps:
+
+Compute the gradients with compute_gradients().
+Process the gradients as you wish.
+Apply the processed gradients with apply_gradients().
+Example:
+
+# Create an optimizer.
+opt = GradientDescentOptimizer(learning_rate=0.1)
+
+# Compute the gradients for a list of variables.
+grads_and_vars = opt.compute_gradients(loss, <list of variables>)
+
+...
+
+
+
+//=== tf.reduce_mean()
+For example:
+
+# 'x' is [[1., 1.]
+#         [2., 2.]]
+tf.reduce_mean(x) ==> 1.5
+tf.reduce_mean(x, 0) ==> [1.5, 1.5]
+tf.reduce_mean(x, 1) ==> [1.,  2.]
+
+
+//===
+tf.train.Optimizer.minimize(loss, global_step=None, var_list=None, gate_gradients=1, aggregation_method=None, colocate_gradients_with_ops=False, name=None, grad_loss=None)
+
+Add operations to minimize loss by updating var_list.
+
+This method simply combines calls compute_gradients() and apply_gradients(). If you want to process the gradient before applying them call compute_gradients() and apply_gradients() explicitly instead of using this function.
+
+Args:
+
+loss: A Tensor containing the value to minimize.
+global_step: Optional Variable to increment by one after the variables have been updated.
+var_list: Optional list of Variable objects to update to minimize loss. Defaults to the list of variables collected in the graph under the key GraphKeys.TRAINABLE_VARIABLES.
+gate_gradients: How to gate the computation of gradients. Can be GATE_NONE, GATE_OP, or GATE_GRAPH.
+aggregation_method: Specifies the method used to combine gradient terms. Valid values are defined in the class AggregationMethod.
+colocate_gradients_with_ops: If True, try colocating gradients with the corresponding op.
+name: Optional name for the returned operation.
+grad_loss: Optional. A Tensor holding the gradient computed for loss.
+
+
+Returns:
+An Operation that updates the variables in var_list. If global_step was not None, that operation also increments global_step.
+
+Raises:
+ValueError: If some of the variables are not Variable objects.

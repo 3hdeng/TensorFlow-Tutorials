@@ -1,0 +1,39 @@
+tensorflow optimizer
+
+http://learningtensorflow.com/lesson7/
+
+import tensorflow as tf
+
+
+x = tf.Variable(0, name='x')
+
+model = tf.initialize_all_variables()
+
+with tf.Session() as session:
+    session.run(model)
+    for i in range(5):
+        x = x + 1
+        print(session.run(x))
+        
+
+
+We can alter this workflow to instead use a variable as the convergence loop, 
+such as in the following:
+
+import tensorflow as tf
+
+x = tf.Variable(0., name='x')
+threshold = tf.constant(5.)
+
+model = tf.initialize_all_variables()
+
+with tf.Session() as session:
+    session.run(model)
+    while session.run(tf.less(x, threshold)):
+        x = x + 1
+        x_value = session.run(x)
+        print(x_value)
+
+The major change here is that the loop is now a while loop, 
+continuing to loop while the test (using tf.less for a less-than-test) is true. 
+
