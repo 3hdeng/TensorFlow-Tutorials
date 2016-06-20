@@ -29,7 +29,7 @@ predict_op = tf.argmax(py_x, 1) # at predict time, evaluate the argmax of the lo
 
 print(teY.shape)
 print(np.argmax(teY, axis=1).shape)
-print(np.mean([true,true,true, false, true]))
+print(np.mean([True,True,True, False, True]))
 # Launch the graph in a session
 with tf.Session() as sess:
     # you need to initialize all variables
@@ -40,9 +40,8 @@ with tf.Session() as sess:
             # print( sess.run(cost, feed_dict={X: trX[start:end], Y: trY[start:end]}) )
             sess.run(train_op, feed_dict={X: trX[start:end], Y: trY[start:end]})
             # print(sess.run(w)[1][1]) xxxx print(w[1][1])
-        #w_val=sess.run(w)    
-        #print("weighting adapting: ", w_val[0], w_val[100])    
-        print(i, np.argmax(teY, axis=1))
-        #== sess.run(predict_op, feed_dict={X: teX, Y: teY}) )
-        #print(i, np.mean(np.argmax(teY, axis=1) ==
-        #         sess.run(predict_op, feed_dict={X: teX, Y: teY})))
+        w_val=sess.run(w)    
+        print("weighting adapting: ", w_val[0], w_val[100])    
+        
+        print(i, np.mean(np.argmax(teY, axis=1) ==
+                 sess.run(predict_op, feed_dict={X: teX, Y: teY})))
