@@ -1,0 +1,60 @@
+https://www.tensorflow.org/versions/r0.9/how_tos/variables/index.html
+
+use variables to hold and update parameters. 
+Variables are in-memory buffers containing tensors. 
+They must be explicitly initialized and can be saved to disk during and after training. 
+
+
+* pass a Tensor as its initial value to the Variable() constructor
+
+
+
+
+//=== Calling tf.Variable() adds several ops to the graph:
+
+- A variable op that holds the variable value.
+- An initializer op that sets the variable to its initial value. This is actually a tf.assign op.
+- The ops for the initial value, such as the zeros op for the biases variable in the example 
+are also added to the graph.
+
+The value returned by tf.Variable() value is an instance of the Python class tf.Variable.
+
+
+//===
+# Create two variables.
+weights = tf.Variable(tf.random_normal([784, 200], stddev=0.35),
+                      name="weights")
+biases = tf.Variable(tf.zeros([200]), name="biases")
+...
+# Add an op to initialize the variables.
+init_op = tf.initialize_all_variables()
+
+# Later, when launching the model
+with tf.Session() as sess:
+  # Run the init operation.
+  sess.run(init_op)
+  ...
+  # Use the model
+  ...
+  
+  
+//===  
+To initialize a new variable from the value of another variable use the other variable's initialized_value() property. You can use the initialized value directly as the initial value for the new variable, or you can use it as any other tensor to compute a value for the new variable.
+
+# Create a variable with a random value.
+weights = tf.Variable(tf.random_normal([784, 200], stddev=0.35),
+                      name="weights")
+# Create another variable with the same value as 'weights'.
+w2 = tf.Variable(weights.initialized_value(), name="w2")
+# Create another variable with twice the value of 'weights'
+w_twice = tf.Variable(weights.initialized_value() * 2.0, name="w_twice")  
+
+
+//===  tf.train.Saver 
+Saving and Restoring
+
+The easiest way to save and restore a model is to use a tf.train.Saver object. The constructor 
+adds save and restore ops to the graph for all, or a specified list, of the variables in the graph
+
+To understand what variables are in a checkpoint, you can use the inspect_checkpoint library, 
+and in particular, the print_tensors_in_checkpoint_file function.

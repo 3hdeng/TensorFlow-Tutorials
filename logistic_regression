@@ -1,0 +1,83 @@
+//=== https://en.wikipedia.org/wiki/Logistic_regression
+In statistics, logistic regression, or logit regression, or logit model is
+a regression model where the dependent variable (DV) is categorical.
+
+Logistic regression was developed by statistician David Cox in 1958.
+
+ * it is not a classification method. 
+ It could be called a qualitative response/discrete choice model in the terminology of economics.
+ 
+ 
+Logistic regression measures the relationship between 
+ the categorical dependent variable and one or more independent variables 
+ by estimating probabilities using a logistic function, which is the cumulative logistic distribution.
+ 
+Logistic regression assumes a standard logistic distribution of errors and 
+probit regression assumes a standard normal distribution of errors
+
+
+Logistic regression can be seen as a special case of the generalized linear model 
+but, The model of logistic regression is based on quite different assumptions 
+(about the relationship between dependent and independent variables) 
+from those of linear regression
+
+the key differences of these two models can be seen in the following two features of logistic regression. 
+First, the conditional distribution y|x is a Bernoulli distribution rather than a Gaussian distribution, because the dependent variable is binary. 
+Second, the predicted values are probabilities and are therefore restricted to (0,1)
+through the logistic distribution function 
+because logistic regression predicts the probability of particular outcomes.
+
+
+//=== latent
+The error term \epsilon  is not observed, and so the y\prime  is also an unobservable, 
+hence termed "latent". (The observed data are values of y and x) 
+
+Unlike ordinary regression, however, the \beta  parameters cannot be expressed 
+by any direct formula of the y and x values in the observed data.
+
+
+//=== logistic function (sigma)
+(-inf, inf)  --> [0,1]
+sigma(t)= 1/(1+ exp(-t))
+
+t= b0+ b1*x
+
+* logistic function can now be written as:
+ F(x)= 1/[1+exp-(\beta _{0}+\beta _{1}x)]
+ 
+* logit function(log odds) (inverse of logistic function) 
+ g(F)= ln[F/(1-F)] = b0 + b1*x
+ 
+ In mathematical modelling and statistical modelling, 
+ there are dependent and independent variables. 
+ The models investigate how the former depend on the latter. 
+ The dependent variables represent the output or outcome. 
+ The independent variables represent inputs or causes.
+ 
+ "Explanatory variable" is preferred by some authors over "independent variable" 
+ when the quantities treated as "independent variables" may not be statistically independent.
+ 
+ 
+ "Explained variable" is preferred by some authors over "dependent variable" 
+ when the quantities treated as "dependent variables" may not be statistically dependent
+ 
+ If the dependent variable is referred to as an "explained variable" 
+ then the term "predictor variable" is preferred by some authors for the independent variable.
+ 
+ *** controlled var, extraneous var
+ the independent variable that will be kept constant or monitored to try to minimise its effect on the experiment. 
+ Such variables may be designated as either a "controlled variable", "control variable", or "extraneous variable".
+ 
+ 
+A variable is extraneous only when it can be assumed (or shown) to influence the dependent variable. 
+If included in a regression, it can improve the fit of the model. 
+If it is excluded from the regression and 
+if it has a non-zero covariance with one or more of the independent variables of interest,
+its omission will bias the regression's result for the effect of that independent variable of interest. 
+-->
+This effect is called confounding or omitted variable bias; 
+in these situations, design changes and/or statistical control is necessary. 
+ 
+
+
+
