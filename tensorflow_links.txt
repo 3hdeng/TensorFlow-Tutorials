@@ -1,0 +1,13 @@
+http://learningtensorflow.com/lesson2/
+http://learningtensorflow.com/lesson4/
+http://learningtensorflow.com/lesson5/
+
+
+https://www.tensorflow.org/versions/r0.9/api_docs/python/train.html#GradientDescentOptimizer
+https://www.tensorflow.org/versions/r0.9/get_started/os_setup.html#pip-installation
+
+https://www.tensorflow.org/versions/r0.9/api_docs/python/nn.html#sigmoid
+
+
+https://www.tensorflow.org/versions/r0.9/api_docs/python/array_ops.html
+reshape ?

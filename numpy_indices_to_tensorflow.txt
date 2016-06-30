@@ -1,0 +1,28 @@
+//=== http://stackoverflow.com/questions/37061808/how-does-tensorflow-indexing-work
+
+x = np.zeros((3, 4))
+row_indices = np.array([1, 1, 2])
+col_indices = np.array([0, 2, 3])
+x[row_indices, col_indices] = 2
+x
+with output:
+
+array([[ 0.,  0.,  0.,  0.],
+       [ 2.,  0.,  2.,  0.],
+       [ 0.,  0.,  0.,  2.]])
+... and ...
+
+x[row_indices, col_indices] = np.array([5, 4, 3])
+x
+with output:
+
+array([[ 0.,  0.,  0.,  0.],
+       [ 5.,  0.,  4.,  0.],
+       [ 0.,  0.,  0.,  3.]])
+... and finally ...
+
+y = x[row_indices, col_indices]
+y
+with output:
+
+array([ 5.,  4.,  3.])

@@ -4,7 +4,7 @@ a regression model where the dependent variable (DV) is categorical.
 
 Logistic regression was developed by statistician David Cox in 1958.
 
- * it is not a classification method. 
+ * it is not a classification method?? --> regression method ? 
  It could be called a qualitative response/discrete choice model in the terminology of economics.
  
  
@@ -12,8 +12,8 @@ Logistic regression measures the relationship between
  the categorical dependent variable and one or more independent variables 
  by estimating probabilities using a logistic function, which is the cumulative logistic distribution.
  
-Logistic regression assumes a standard logistic distribution of errors and 
-probit regression assumes a standard normal distribution of errors
+"Logistic regression" assumes a standard logistic distribution of errors and 
+"Probit regression" assumes a standard normal distribution of errors
 
 
 Logistic regression can be seen as a special case of the generalized linear model 
@@ -28,12 +28,14 @@ through the logistic distribution function
 because logistic regression predicts the probability of particular outcomes.
 
 
-//=== latent
+//=== "latent"
 The error term \epsilon  is not observed, and so the y\prime  is also an unobservable, 
 hence termed "latent". (The observed data are values of y and x) 
 
 Unlike ordinary regression, however, the \beta  parameters cannot be expressed 
 by any direct formula of the y and x values in the observed data.
+y=\beta_0 + beta_1*x
+y'= y + \epsilon
 
 
 //=== logistic function (sigma)

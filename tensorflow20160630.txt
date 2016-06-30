@@ -1,0 +1,123 @@
+tf.nn.sigmoid()
+
+https://www.tensorflow.org/versions/r0.9/api_docs/python/nn.html#sigmoid
+
+//=== tf.sigmoid(x, name=None)
+
+Computes sigmoid of x element-wise.
+
+Specifically, y = 1 / (1 + exp(-x)).
+
+Args:
+
+x: A Tensor with type float, double, int32, complex64, int64, or qint32.
+name: A name for the operation (optional).
+Returns:
+
+A Tensor with the same type as x if x.dtype != qint32 otherwise the return type is quint8.
+
+
+//=== tf.nn.relu(features, name=None)
+
+Computes rectified linear: max(features, 0).
+
+Args:
+
+features: A Tensor. Must be one of the following types: float32, float64, int32, int64, uint8, int16, int8, uint16, half.
+name: A name for the operation (optional).
+Returns:
+
+A Tensor. Has the same type as features.
+
+
+//=== 
+tf.nn.dropout(x, keep_prob, noise_shape=None, seed=None, name=None)
+
+Computes dropout.
+
+With probability keep_prob, outputs the input element scaled up by 1 / keep_prob, 
+otherwise outputs 0. The scaling is so that the expected sum is unchanged.
+
+By default, each element is kept or dropped independently. 
+If noise_shape is specified, it must be broadcastable to the shape of x, and 
+only dimensions with noise_shape[i] == shape(x)[i] will make independent decisions. 
+For example, if 
+shape(x) = [k, l, m, n] and noise_shape = [k, 1, 1, n], each batch and channel component 
+will be kept independently and each row and column will be kept or not kept together.
+
+Args:
+
+x: A tensor.
+keep_prob: A scalar Tensor with the same type as x. The probability that each element is kept.
+noise_shape: A 1-D Tensor of type int32, representing the shape for randomly generated keep/drop flags.
+seed: A Python integer. Used to create random seeds. See set_random_seed for behavior.
+name: A name for this operation (optional).
+Returns:
+
+A Tensor of the same shape of x.
+
+//===
+ tf.reshape(x,-1,m,n)
+ -1 ==>  dim1 * dim2 *dim3 *... /m/n
+ 
+
+//=== tensorflow array, rank, shape, dtype
+https://www.tensorflow.org/versions/r0.9/resources/dims_types.html
+ 
+//=== indexing operation?
+
+foo = tf.constant([[1,2,3], [4,5,6]])
+foo[:, 1] # [2, 5]
+indexes = tf.constant([1, 2])
+foo[:, indexes] # [2, 6]
+
+*** https://github.com/tensorflow/tensorflow/issues/206
+Just a note -- we do not want to blindly copy NumPy vectorized indexing in __getitem__. 
+Instead, we want so-called "outer indexing" (like MATLAB), which is much more intuitive.
+
+This means that indexing with mixed slices and arrays should differ in TensorFlow compared to NumPy.
+
+
+A workaround for the special case of indexing across some dimension with a list of integers, 
+which might be useful to some folks:
+
+ ind = [3, 5, 0]
+ # y = x[:,ind,:]  # this doesn't work right now
+ y = tf.concat(1, [tf.expand_dims(x[:, i, :], 1) for i in ind])
+I emphasize that this only works if ind a list of integerts but does 
+not cover the case when ind is a Tensor of integers.
+
+
+
+//===
+ test_indices = np.arange(len(teX)) # Get A Test Batch
+        np.random.shuffle(test_indices)
+        test_indices = test_indices[0:test_size]
+
+//===
+def model(X, w, w2, w3, w4, w_o, p_keep_conv, p_keep_hidden):
+    l1a = tf.nn.relu(tf.nn.conv2d(X, w,                       # l1a shape=(?, 28, 28, 32)
+                        strides=[1, 1, 1, 1], padding='SAME'))
+    l1 = tf.nn.max_pool(l1a, ksize=[1, 2, 2, 1],              # l1 shape=(?, 14, 14, 32)
+                        strides=[1, 2, 2, 1], padding='SAME')
+    l1 = tf.nn.dropout(l1, p_keep_conv)
+
+    l2a = tf.nn.relu(tf.nn.conv2d(l1, w2,                     # l2a shape=(?, 14, 14, 64)
+                        strides=[1, 1, 1, 1], padding='SAME'))
+    l2 = tf.nn.max_pool(l2a, ksize=[1, 2, 2, 1],              # l2 shape=(?, 7, 7, 64)
+                        strides=[1, 2, 2, 1], padding='SAME')
+    l2 = tf.nn.dropout(l2, p_keep_conv)
+
+    l3a = tf.nn.relu(tf.nn.conv2d(l2, w3,                     # l3a shape=(?, 7, 7, 128)
+                        strides=[1, 1, 1, 1], padding='SAME'))
+    l3 = tf.nn.max_pool(l3a, ksize=[1, 2, 2, 1],              # l3 shape=(?, 4, 4, 128)
+                        strides=[1, 2, 2, 1], padding='SAME')
+    l3 = tf.reshape(l3, [-1, w4.get_shape().as_list()[0]])    # reshape to (?, 2048)
+    l3 = tf.nn.dropout(l3, p_keep_conv)
+
+    l4 = tf.nn.relu(tf.matmul(l3, w4))
+    l4 = tf.nn.dropout(l4, p_keep_hidden)
+
+    pyx = tf.matmul(l4, w_o)
+    return pyx
+

@@ -1,0 +1,15 @@
+http://learningtensorflow.com/lesson5/
+
+tensorenv + jupyter notebook
+
+
+One major change is the use of an InteractiveSession, 
+which allows us to run variables without needing to constantly refer to the session object
+(less typing!). 
+
+
+import tensorflow as tf
+
+session = tf.InteractiveSession()
+
+x = tf.constant(list(range(10)))
