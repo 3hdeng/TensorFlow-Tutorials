@@ -1,6 +1,7 @@
 import tensorflow as tf
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
+from PIL import Image
 
 import matplotlib.rcsetup as rcsetup
 print(rcsetup.all_backends)
@@ -8,6 +9,7 @@ print(rcsetup.all_backends)
 # First, load the image again
 filename = "brain_left_right.jpg"
 raw_image_data = mpimg.imread(filename)
+#raw_image_data = Image.open(filename)
 
 image = tf.placeholder("uint8", [None, None, 3])
 slice = tf.slice(image, [200, 0, 0], [100, -1, -1])

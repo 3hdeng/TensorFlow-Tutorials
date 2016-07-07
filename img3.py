@@ -14,8 +14,8 @@ images = tf.image.decode_jpeg(value, channels=3)
 
 sess = tf.InteractiveSession()
 init_op = tf.initialize_all_variables()
-#with tf.Session() as sess.as_default():
-#with sess:
+#xxx with tf.Session() as sess.as_default():
+#with sess.as_default():
 sess.run(init_op)
 
 # Start populating the filename queue.

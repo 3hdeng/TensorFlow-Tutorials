@@ -15,7 +15,7 @@ session = tf.InteractiveSession()
 
 
 #=======exercise========
-arr1=np.random.randint(5, size=10000000)
+arr1=np.random.randint(256, size=1000000)
 arr2=tf.to_float(arr1, name='ToFloat')
 
 print(arr1.size)
@@ -34,3 +34,57 @@ import resource
 print("{} Kb".format(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss))
 
 session.close()
+
+#=====  exercise
+
+from PIL import Image
+from io import BytesIO
+import matplotlib.image as mpimg
+
+# First, load the image again
+filename = "brain_left_right.jpg"
+#raw_image_data = Image.open(filename)
+raw_image_data = mpimg.imread(filename)
+
+#===
+image = tf.placeholder("uint8", [None, None, 3])
+slice = tf.slice(image, [200, 0, 0], [100, -1, -1])
+
+with tf.Session() as session:
+    result = session.run(slice, feed_dict={image: raw_image_data})
+    print(result.shape)
+
+
+# read data from string
+print(type(result))
+ms = BytesIO()
+
+bytes = Image.open('tmp1.jpg') #xxx.tobytes()
+bytes.save(ms, format = "JPEG")
+ms.flush()
+ms.seek(0)
+
+im = Image.open(ms)
+# try Image.open(open("path/to/file", 'rb'))
+
+im
+
+
+
+
+# ==== log
+"""
+ $ python lesson5.py
+1000000
+Tensor("ToFloat:0", shape=(1000000,), dtype=float32)
+(1000000,)
+107212 Kb
+Exception AssertionError: AssertionError("Nesting violated for default stack of <type 'weakref'> objects",) in <bound method InteractiveSession.__del__ of <tensorflow.python.client.session.InteractiveSession object at 0x7fc20eeb6450>> ignored
+(100, 550, 3)
+Traceback (most recent call last):
+  File "lesson5.py", line 55, in <module>
+    im = Image.open(BytesIO(result))
+  File "/usr/local/lib/python2.7/dist-packages/PIL/Image.py", line 2317, in open
+    % (filename if filename else fp))
+IOError: cannot identify image file <_io.BytesIO object at 0x7fc20c139b30>
+"""
