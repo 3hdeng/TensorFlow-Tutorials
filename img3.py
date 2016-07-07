@@ -15,16 +15,16 @@ images = tf.image.decode_jpeg(value, channels=3)
 sess = tf.InteractiveSession()
 init_op = tf.initialize_all_variables()
 #with tf.Session() as sess.as_default():
-with sess.as_default():
-  sess.run(init_op)
+#with sess:
+sess.run(init_op)
 
 # Start populating the filename queue.
 
 coord = tf.train.Coordinator()
-threads = tf.train.start_queue_runners(coord=coord) #, sess=sess)
+threads = tf.train.start_queue_runners(coord=coord, sess=sess)
 
 for i in range(len(filenames)): #length of your filename list
-  image = images.eval() #here is your image Tensor :) 
+  image = images.eval(session=sess) #here is your image Tensor :) 
 
 print(image.shape)
 plt.show(Image.fromarray(np.asarray(image)))
