@@ -178,3 +178,19 @@ Resize images to size using bilinear interpolation.
 
 Input images can be of different types but output images are always float.
 
+
+
+
+//=== https://github.com/HamedMP/ImageFlow
+imageflow: 
+A simple wrapper of TensorFlow for Converting, Importing (and Soon, Training) Images in tensorflow.
+
+Installation: pip install imageflow
+Usage:   import imageflow
+
+
+Dependencies:
+
+TensorFlow ( => version 0.7.0)
+Numpy
+Pillow

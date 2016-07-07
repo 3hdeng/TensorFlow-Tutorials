@@ -1,0 +1,7 @@
+[Q] how to run jupyter notebook on c9.io?
+jupyter notebook --ip=0.0.0.0 --port=8080 --no-browser
+xxx jupyter notebook --ip=0.0.0.0  --no-browser
+
+--> "Preview" to show c9.io app url
+https://tensorflow-nlintz-deng3h.c9users.io
+https://tensorflow-nlintz-deng3h.c9users.io/notebooks/lesson5.ipynb
