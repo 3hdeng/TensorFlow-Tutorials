@@ -1,0 +1,180 @@
+//=== https://www.tensorflow.org/versions/master/api_docs/python/image.html#encoding-and-decoding
+TensorFlow provides Ops to decode and encode JPEG and PNG formats. 
+Encoded images are represented by scalar string Tensors, 
+decoded images by 3-D uint8 tensors of shape [height, width, channels]. (PNG also supports uint16.)
+
+
+//===
+tf.image.decode_jpeg(contents, channels=None, ratio=None, fancy_upscaling=None, try_recover_truncated=None, acceptable_fraction=None, name=None)
+
+Decode a JPEG-encoded image to a uint8 tensor.
+
+The attr channels indicates the desired number of color channels for the decoded image.
+
+Accepted values are:
+
+0: Use the number of channels in the JPEG-encoded image.
+1: output a grayscale image.
+3: output an RGB image.
+If needed, the JPEG-encoded image is transformed to match the requested number of color channels.
+
+The attr ratio allows downscaling the image by an integer factor during decoding. Allowed values are: 1, 2, 4, and 8. This is much faster than downscaling the image later.
+
+
+
+Args:
+
+contents: A Tensor of type string. 0-D. The JPEG-encoded image.
+channels: An optional int. Defaults to 0. Number of color channels for the decoded image.
+ratio: An optional int. Defaults to 1. Downscaling ratio.
+fancy_upscaling: An optional bool. Defaults to True. If true use a slower but nicer upscaling of the chroma planes (yuv420/422 only).
+try_recover_truncated: An optional bool. Defaults to False. If true try to recover an image from truncated input.
+acceptable_fraction: An optional float. Defaults to 1. The minimum required fraction of lines before a truncated input is accepted.
+name: A name for the operation (optional).
+
+Returns:
+A Tensor of type uint8. 3-D with shape [height, width, channels]..
+
+
+//===
+tf.image.encode_jpeg(image, format=None, quality=None, progressive=None, optimize_size=None, chroma_downsampling=None, density_unit=None, x_density=None, y_density=None, xmp_metadata=None, name=None)
+
+JPEG-encode an image.
+
+image is a 3-D uint8 Tensor of shape [height, width, channels].
+
+The attr format can be used to override the color format of the encoded output. Values can be:
+
+'': Use a default format based on the number of channels in the image.
+grayscale: Output a grayscale JPEG image. The channels dimension of image must be 1.
+rgb: Output an RGB JPEG image. The channels dimension of image must be 3.
+If format is not specified or is the empty string, a default format is picked in function of the number of channels in image:
+
+1: Output a grayscale image.
+3: Output an RGB image.
+Args:
+
+image: A Tensor of type uint8. 3-D with shape [height, width, channels].
+format: An optional string from: "", "grayscale", "rgb". Defaults to "". Per pixel image format.
+quality: An optional int. Defaults to 95. Quality of the compression from 0 to 100 (higher is better and slower).
+progressive: An optional bool. Defaults to False. If True, create a JPEG that loads progressively (coarse to fine).
+optimize_size: An optional bool. Defaults to False. If True, spend CPU/RAM to reduce size with no quality change.
+chroma_downsampling: An optional bool. Defaults to True. See http://en.wikipedia.org/wiki/Chroma_subsampling.
+density_unit: An optional string from: "in", "cm". Defaults to "in". Unit used to specify x_density and y_density: pixels per inch ('in') or centimeter ('cm').
+x_density: An optional int. Defaults to 300. Horizontal pixels per density unit.
+y_density: An optional int. Defaults to 300. Vertical pixels per density unit.
+xmp_metadata: An optional string. Defaults to "". If not empty, embed this XMP metadata in the image header.
+name: A name for the operation (optional).
+
+Returns:
+A Tensor of type string. 0-D. JPEG-encoded image.
+
+
+
+//===
+tf.image.encode_png(image, compression=None, name=None)
+
+PNG-encode an image.
+
+image is a 3-D uint8 or uint16 Tensor of shape [height, width, channels] where channels is:
+
+1: for grayscale.
+2: for grayscale + alpha.
+3: for RGB.
+4: for RGBA.
+The ZLIB compression level, compression, can be -1 for the PNG-encoder default or a value from 0 to 9. 9 is the highest compression level, generating the smallest output, but is slower.
+
+Args:
+
+image: A Tensor. Must be one of the following types: uint8, uint16. 3-D with shape [height, width, channels].
+compression: An optional int. Defaults to -1. Compression level.
+name: A name for the operation (optional).
+
+Returns:
+A Tensor of type string. 0-D. PNG-encoded image.
+
+
+//===
+The convenience function resize_images() supports both 4-D and 3-D tensors as input and output. 4-D tensors are for batches of images, 3-D tensors for individual images.
+
+Other resizing Ops only support 4-D batches of images as input: resize_area, resize_bicubic, resize_bilinear, resize_nearest_neighbor.
+
+Example:
+
+# Decode a JPG image and resize it to 299 by 299 using default method.
+image = tf.image.decode_jpeg(...)
+resized_image = tf.image.resize_images(image, 299, 299)
+
+
+//===
+tf.image.resize_images(images, new_height, new_width, method=0, align_corners=False)
+
+Resize images to new_width, new_height using the specified method.
+
+Resized images will be distorted if their original aspect ratio is not the same as new_width, new_height. To avoid distortions see resize_image_with_crop_or_pad.
+
+method can be one of:
+
+ResizeMethod.BILINEAR: Bilinear interpolation.
+ResizeMethod.NEAREST_NEIGHBOR: Nearest neighbor interpolation.
+ResizeMethod.BICUBIC: Bicubic interpolation.
+ResizeMethod.AREA: Area interpolation.
+
+Args:
+images: 4-D Tensor of shape [batch, height, width, channels] or 3-D Tensor of shape [height, width, channels].
+new_height: integer.
+new_width: integer.
+method: ResizeMethod. Defaults to ResizeMethod.BILINEAR.
+align_corners: bool. If true, exactly align all 4 corners of the input and output. Defaults to false.
+
+Raises:
+ValueError: if the shape of images is incompatible with the shape arguments to this function
+ValueError: if an unsupported resize method is specified.
+
+Returns:
+If images was 4-D, a 4-D float Tensor of shape [batch, new_height, new_width, channels]. If images was 3-D, a 3-D float Tensor of shape [new_height, new_width, channels].
+
+
+//=== 
+tf.image.resize_area(images, size, align_corners=None, name=None)
+
+Resize images to size using area interpolation.
+
+Input images can be of different types but output images are always float.
+
+Args:
+
+images: A Tensor. Must be one of the following types: uint8, int8, int16, int32, int64, half, float32, float64. 4-D with shape [batch, height, width, channels].
+size: A 1-D int32 Tensor of 2 elements: new_height, new_width. The new size for the images.
+align_corners: An optional bool. Defaults to False. 
+   If true, rescale input by (new_height - 1) / (height - 1), which exactly aligns the 4 corners of images and resized images. If false, rescale by new_height / height. Treat similarly the width dimension.
+name: A name for the operation (optional).
+
+Returns:
+A Tensor of type float32. 4-D with shape [batch, new_height, new_width, channels].
+
+
+//=== 
+tf.image.resize_bicubic(images, size, align_corners=None, name=None)
+
+Resize images to size using bicubic interpolation.
+
+Input images can be of different types but output images are always float.
+
+Args:
+
+images: A Tensor. Must be one of the following types: uint8, int8, int16, int32, int64, half, float32, float64. 4-D with shape [batch, height, width, channels].
+size: A 1-D int32 Tensor of 2 elements: new_height, new_width. The new size for the images.
+align_corners: An optional bool. Defaults to False. If true, rescale input by (new_height - 1) / (height - 1), which exactly aligns the 4 corners of images and resized images. If false, rescale by new_height / height. Treat similarly the width dimension.
+name: A name for the operation (optional).
+
+Returns:
+A Tensor of type float32. 4-D with shape [batch, new_height, new_width, channels].
+
+//===
+tf.image.resize_bilinear(images, size, align_corners=None, name=None)
+
+Resize images to size using bilinear interpolation.
+
+Input images can be of different types but output images are always float.
+
