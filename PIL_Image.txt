@@ -1,3 +1,5 @@
+http://effbot.org/imagingbook/image.htm
+
 open #
 
 Image.open(file) ⇒ image
@@ -15,3 +17,31 @@ from StringIO import StringIO
 
 # read data from string
 im = Image.open(StringIO(data))
+
+
+# ====================================
+
+new #
+
+Image.new(mode, size) ⇒ image
+
+Image.new(mode, size, color) ⇒ image
+
+Creates a new image with the given mode and size. Size is given as a (width, height)-tuple, in pixels. The color is given as a single value for single-band images, and a tuple for multi-band images (with one value for each band).
+
+from PIL import Image
+im = Image.new("RGB", (512, 512), "white")
+
+frombuffer #
+
+Image.frombuffer(mode, size, data) ⇒ image
+
+(New in PIL 1.1.4). Creates an image memory from pixel data in a string or buffer object, using the standard “raw” decoder. For some modes, the image memory will share memory with the original buffer (this means that changes to the original buffer object are reflected in the image). Not all modes can share memory; supported modes include “L”, “RGBX”, “RGBA”, and “CMYK”. For other modes, this function behaves like a corresponding call to the fromstringfunction.
+
+im = Image.frombuffer(mode, size, data, "raw", mode, 0, 1)
+
+
+//===
+ the frombuffer defaults may change in a future release; for portability, change the call to read:
+  frombuffer(mode, size, data, 'raw', mode, 0, 1)
+  im=Image.frombuffer('RGB', result.shape, bytes)

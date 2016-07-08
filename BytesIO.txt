@@ -1,3 +1,11 @@
+//=== https://docs.python.org/2/library/io.html
+
+ For unicode strings StringIO can be used like a file opened in text mode, and 
+ for bytes a BytesIO can be used like a file opened in a binary mode.
+ 
+ 
+ 
+
 Buffered I/O streams provide a higher-level interface to an I/O device than raw I/O does.
 
 class io.BytesIO([initial_bytes])

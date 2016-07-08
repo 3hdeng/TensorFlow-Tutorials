@@ -62,7 +62,9 @@ bytes = result.tobytes()
 print(type(bytes))
 print(bytes[0:10])
 
-im=Image.frombuffer('RGB', result.shape, bytes)
+#slicing (row index, col index, channel index)  --> need wh reverse
+wh=(result.shape[1], result.shape[0])
+im=Image.frombuffer('RGB', wh, bytes, 'raw',  'RGB', 0, 1)
 ms = BytesIO()
 im.save(ms, format = "JPEG")
 ms.flush()
@@ -78,10 +80,10 @@ ms.seek(0)
 
 # print(arr[0:10])
 
-im = Image.open(ms)
+im2 = Image.open(ms)
 # try Image.open(open("path/to/file", 'rb'))
 
-#im
+im2
 
 
 
