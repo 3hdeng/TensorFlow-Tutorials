@@ -1,0 +1,17 @@
+open #
+
+Image.open(file) ⇒ image
+
+Image.open(file, mode) ⇒ image
+
+Opens and identifies the given image file. This is a lazy operation; the function reads the file header, but the actual image data is not read from the file until you try to process the data (call the load method to force loading). If the mode argument is given, it must be “r”.
+
+You can use either a string (representing the filename) or a file object as the file argument. In the latter case, the file object must implement read, seek, and tell methods, and be opened in binary mode.
+
+from PIL import Image
+im = Image.open("lenna.jpg")
+from PIL import image
+from StringIO import StringIO
+
+# read data from string
+im = Image.open(StringIO(data))

@@ -1,0 +1,4 @@
+img3.ipynb error 2016.07.07
+Exception AssertionError: 
+AssertionError("Nesting violated for default stack of <type 'weakref'> objects",) in <bound method InteractiveSession.__del__ of <tensorflow.python.client.session.InteractiveSession object at 0x7f7cd99ab810>> ignored
+(580, 550, 3)

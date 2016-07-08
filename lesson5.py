@@ -43,8 +43,8 @@ import matplotlib.image as mpimg
 
 # First, load the image again
 filename = "brain_left_right.jpg"
-#raw_image_data = Image.open(filename)
-raw_image_data = mpimg.imread(filename)
+raw_image_data = Image.open(filename)
+#raw_image_data = mpimg.imread(filename)
 
 #===
 image = tf.placeholder("uint8", [None, None, 3])
@@ -57,17 +57,31 @@ with tf.Session() as session:
 
 # read data from string
 print(type(result))
-ms = BytesIO()
 
-bytes = Image.open('tmp1.jpg') #xxx.tobytes()
-bytes.save(ms, format = "JPEG")
+bytes = result.tobytes()
+print(type(bytes))
+print(bytes[0:10])
+
+im=Image.frombuffer('RGB', result.shape, bytes)
+ms = BytesIO()
+im.save(ms, format = "JPEG")
 ms.flush()
 ms.seek(0)
+
+
+# readinto(b)
+# Read up to len(b) bytes into b, and return the number of bytes read. 
+# The object b should be a pre-allocated, writable array of bytes, either bytearray or memoryview.
+# arr=bytearray(len(bytes))
+# ms.readinto(arr)
+
+
+# print(arr[0:10])
 
 im = Image.open(ms)
 # try Image.open(open("path/to/file", 'rb'))
 
-im
+#im
 
 
 

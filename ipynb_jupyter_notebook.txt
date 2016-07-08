@@ -5,3 +5,36 @@ xxx jupyter notebook --ip=0.0.0.0  --no-browser
 --> "Preview" to show c9.io app url
 https://tensorflow-nlintz-deng3h.c9users.io
 https://tensorflow-nlintz-deng3h.c9users.io/notebooks/lesson5.ipynb
+
+
+//=== http://stackoverflow.com/questions/17077494/how-do-i-convert-a-ipython-notebook-into-a-python-file-via-commandline
+start notebook with --script flag will save .py file alongside .ipynb on every save
+
+On the command line, you can use nbconvert:
+
+$ ipython nbconvert --to script [YOUR_NOTEBOOK].ipynb
+
+
+//===
+http://stackoverflow.com/questions/23292242/converting-to-not-from-ipython-notebook-format
+
+ In principle it's just two lines of code, plus i/o:
+
+from IPython.nbformat import v3, v4
+
+with open("input-file.py") as fpin:
+    text = fpin.read()
+
+nbook = v3.reads_py(text)
+nbook = v4.upgrade(nbook)  # Upgrade v3 to v4
+
+jsonform = v4.writes(nbook) + "\n"
+with open("output-file.ipynb", "w") as fpout:
+    fpout.write(jsonform)
+But not so fast! In fact, the notebook API has a nasty bug: If the last cell in the input is a markdown cell, v3.reads_py() will lose it. The simplest work-around is to tack on a bogus <markdown> cell at the end: The bug will delete it, and everyone is happy. So do the following before you pass text to v3.reads_py():
+
+text += """
+# <markdowncell>
+
+# If you can read this, reads_py() is no longer broken! 
+"""

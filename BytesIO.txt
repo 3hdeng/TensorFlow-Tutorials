@@ -1,0 +1,14 @@
+Buffered I/O streams provide a higher-level interface to an I/O device than raw I/O does.
+
+class io.BytesIO([initial_bytes])
+A stream implementation using an in-memory bytes buffer. It inherits BufferedIOBase.
+
+The optional argument initial_bytes is a bytes object that contains initial data.
+
+BytesIO provides or overrides these methods in addition to those from BufferedIOBase and IOBase:
+
+getvalue()
+Return bytes containing the entire contents of the buffer.
+
+read1()
+In BytesIO, this is the same as read().
