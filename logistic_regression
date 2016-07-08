@@ -1,3 +1,39 @@
+//=== https://en.wikipedia.org/wiki/Logistic_distribution
+, the logistic distribution is a continuous probability distribution. 
+Its cumulative distribution function is the logistic function, 
+which appears in logistic regression and feedforward neural networks. 
+
+It resembles the normal distribution in shape but has heavier tails (higher kurtosis)
+
+The Tukey lambda distribution can be considered a generalization of the logistic distribution 
+since it adds a shape parameter, λ (the Tukey distribution is logistic when λ is zero).
+
+The logistic distribution arises as limit distribution of 
+a finite-velocity damped random motion described by a telegraph process in which 
+the random times between consecutive velocity changes 
+have independent exponential distributions with linearly increasing parameters.[4]
+
+
+
+the Bernoulli distribution, named after Swiss scientist Jacob Bernoulli,[1] 
+is the probability distribution of a random variable 
+which takes the value 1 with success probability of  p and 
+the value 0 with failure probability of  q=1-p. 
+
+It can be used to represent a coin toss where 1 and 0 would represent "head" and "tail" 
+(or vice versa), respectively. 
+In particular, unfair coins would have p\neq 0.5.
+
+ the Bernoulli distribution is a binomial distribution where n=1.
+ 
+ 
+ If {\displaystyle X_{1},\dots ,X_{n}} X_{1},\dots ,X_{n} are 
+ independent, identically distributed (i.i.d.) random variables, 
+ all Bernoulli distributed with success probability p, then
+ Y=\sum _{k=1}^{n}X_{k}\   --> binomial(n,p) (binomial distribution).
+ 
+ 
+
 //=== https://en.wikipedia.org/wiki/Logistic_regression
 In statistics, logistic regression, or logit regression, or logit model is
 a regression model where the dependent variable (DV) is categorical.
