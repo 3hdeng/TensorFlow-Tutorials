@@ -1,0 +1,103 @@
+//=== https://www.tensorflow.org/versions/r0.9/api_docs/python/control_flow_ops.html#while_loop
+tf.while_loop(cond, body, loop_vars, parallel_iterations=10, back_prop=True, swap_memory=False, name=None)
+
+Repeat body while the condition cond is true.
+
+cond is a callable returning a boolean scalar tensor. body is a callable returning a list of tensors of the same length and with the same types as loop_vars. loop_vars is a list of tensors that is passed to both cond and body. cond and body both take as many arguments as there are loop_vars.
+
+In addition to regular Tensors or IndexedSlices, the body may accept and return TensorArray objects. The flows of the TensorArray objects will be appropriately forwarded between loops and during gradient calculations.
+
+While cond evaluates to true, body is executed.
+
+while_loop implements non-strict semantics, enabling multiple iterations to run in parallel. The maximum number of parallel iterations can be controlled by parallel_iterations, which gives users some control over memory consumption and execution order. For correct programs, while_loop should return the same result for any parallel_iterations > 0.
+
+For training, TensorFlow remembers the tensors that are produced in the forward inference but needed in back propagation. These tensors can be a main source of memory consumption and often cause OOM problems when training on GPUs. When the flag swap_memory is true, we swap out these tensors from GPU to CPU. This for example allows us to train RNN models with very long sequences and large batches.
+
+Args:
+cond: A callable that represents the termination condition of the loop.
+body: A callable that represents the loop body.
+loop_vars: The list of variable input tensors.
+parallel_iterations: The number of iterations allowed to run in parallel.
+back_prop: Whether backprop is enabled for this while loop.
+swap_memory: Whether GPU-CPU memory swap is enabled for this loop.
+name: Optional name prefix for the returned tensors.
+
+
+
+Returns:
+The output tensors for the loop variables after the loop.
+
+Raises:
+TypeError: if cond or body is not callable.
+ValueError: if loop_var is empty.
+
+Example:
+
+i = tf.constant(0)
+c = lambda i: tf.less(i, 10)
+b = lambda i: tf.add(i, 1)
+r = tf.while_loop(c, b, [i])
+
+
+//=== https://www.tensorflow.org/versions/r0.9/api_docs/python/control_flow_ops.html#count_up_to
+tf.count_up_to(ref, limit, name=None)
+
+Increments 'ref' until it reaches 'limit'.
+
+This operation outputs "ref" after the update is done. This makes it easier to chain operations that need to use the updated value.
+
+Args:
+
+ref: A mutable Tensor. Must be one of the following types: int32, int64. Should be from a scalar Variable node.
+limit: An int. If incrementing ref would bring it above limit, instead generates an 'OutOfRange' error.
+name: A name for the operation (optional).
+Returns:
+
+A Tensor. Has the same type as ref. A copy of the input before increment. If nothing else modifies the input, the values produced will all be distinct.
+
+tf.cond(pred, fn1, fn2, name=None)
+
+Return either fn1() or fn2() based on the boolean predicate pred.
+
+fn1 and fn2 both return lists of output tensors. fn1 and fn2 must have the same non-zero number and type of outputs.
+
+Note that the conditional execution applies only to the operations defined in fn1 and fn2. Consider the following simple program:
+
+z = tf.mul(a, b)
+result = tf.cond(x < y, lambda: tf.add(x, z), lambda: tf.square(y))
+If x < y, the tf.add operation will be executed and tf.square operation will not be executed. Since z is needed for at least one branch of the cond, the tf.mul operation is always executed, unconditionally. Although this behavior is consistent with the dataflow model of TensorFlow, it has occasionally surprised some users who expected a lazier semantics.
+
+Args:
+
+pred: A scalar determining whether to return the result of fn1 or fn2.
+fn1: The callable to be performed if pred is true.
+fn2: The callable to be performed if pref is false.
+name: Optional name prefix for the returned tensors.
+Returns:
+
+Tensors returned by the call to either fn1 or fn2. If the callables return a singleton list, the element is extracted from the list.
+
+Raises:
+
+TypeError: if fn1 or fn2 is not callable.
+ValueError: if fn1 and fn2 do not return the same number of tensors, or return tensors of different types.
+
+Example:
+
+  x = tf.constant(2)
+  y = tf.constant(5)
+  def f1(): return tf.mul(x, 17)
+  def f2(): return tf.add(y, 23)
+  r = cond(tf.less(x, y), f1, f2)
+  # r is set to f1().
+  # Operations in f2 (e.g., tf.add) are not executed.
+
+
+
+//===
+
+https://github.com/tensorflow/tensorflow/issues/246
+tensorflow loop/iteration
+
+http://csg.csail.mit.edu/CSGArchives/memos/Memo-271.pdf
+1988.Jun.20
