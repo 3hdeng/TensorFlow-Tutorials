@@ -35,7 +35,11 @@ def create_samples(n_clusters, n_samples_per_cluster, n_features, embiggen_facto
     for i in range(n_clusters):
         samples = tf.random_normal((n_samples_per_cluster, n_features),
                                mean=0.0, stddev=5.0, dtype=tf.float32, seed=seed, name="cluster_{}".format(i))
-        current_centroid = (np.random.random((1, n_features)) * embiggen_factor) - (embiggen_factor/2)
+        tmp=np.random.rand(1,n_features)
+        tmp=tmp.astype(np.float32)
+        current_centroid = (tmp * embiggen_factor) - (embiggen_factor/2)
+        #print(current_centroid.shape)
+        #print(type(current_centroid[0][0]))
         centroids.append(current_centroid)
         samples += current_centroid
         slices.append(samples)
