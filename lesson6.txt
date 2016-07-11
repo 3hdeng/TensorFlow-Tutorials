@@ -3,6 +3,15 @@ http://learningtensorflow.com/lesson6/
 
 K-means algorithm to cluster data : clustering by K-means
 
+tf.shape()
+initial_centroids = tf.gather(samples, centroid_indices)
+
+tf.expand_dims()
+tf.reduce_sum()
+
+http://esciencegroup.com/2016/01/05/an-encounter-with-googles-tensorflow/
+
+
 //=== tensorflow
 tf.concat()
 
@@ -62,3 +71,77 @@ choice(a[, size, replace, p])	Generates a random sample from a given 1-D array
 bytes(length)	Return random bytes.
 
 random_sample === random == ranf === sample ???
+
+
+//=== https://www.tensorflow.org/versions/r0.9/api_docs/python/array_ops.html#expand_dims
+tf.expand_dims(input, dim, name=None)
+
+if you have a single image of shape [height, width, channels], 
+you can make it a batch of 1 image with expand_dims(image, 0), which will make the shape [1, height, width, channels].
+
+Other examples:
+
+# 't' is a tensor of shape [2]
+shape(expand_dims(t, 0)) ==> [1, 2]
+shape(expand_dims(t, 1)) ==> [2, 1]
+shape(expand_dims(t, -1)) ==> [2, 1]
+
+# 't2' is a tensor of shape [2, 3, 5]
+shape(expand_dims(t2, 0)) ==> [1, 2, 3, 5]
+shape(expand_dims(t2, 2)) ==> [2, 3, 1, 5]
+shape(expand_dims(t2, 3)) ==> [2, 3, 5, 1]
+This operation requires that:
+
+***  -1-input.dims() <= dim <= input.dims()
+if you specify a negative number for dim it is counted backward from the end.
+
+Args:
+
+input: A Tensor.
+dim: A Tensor of type int32. 0-D (scalar). 
+Specifies the dimension index at which to expand the shape of input.
+if you specify a negative number for dim it is counted backward from the end.
+
+name: A name for the operation (optional).
+
+Returns:
+A Tensor. Has the same type as input. 
+Contains the same data as input, but its shape has an additional dimension of size 1 added.
+
+
+//===
+tf.sub will automatically expand the size of the two arguments. 
+This means that having our samples as a matrix, and the centroids as a column vector 
+will produce the pairwise subtraction between them. In order to do this, 
+we use tf.expand_dims to create an extra dimension for both samples and centroids, forcing this behaviour of tf.sub.
+
+
+
+//===
+   % (dtype.name, t.dtype.name, str(t)))
+ValueError: Tensor conversion requested dtype float32 for Tensor with dtype float64
+: 'Tensor("ExpandDims_1:0", shape=(3, 1, 2), dtype=float64)'
+
+"numpy.random.random"  +  tensorflow dtype tf.float64 + tf.float32
+
+[Q] TensorFlow: cast a float64 tensor to float32
+[Q] numpy float64 to float32 
+
+
+//=== tensorflow
+The short answer is that you can convert a tensor from tf.float64 to tf.float32 using the tf.cast() op:
+
+loss = tf.cast(loss, tf.float32)
+The longer answer is that this will not solve all of your problems with the optimizers. (The lack of support for tf.float64 is a known issue.)
+
+//=== numpy
+Given a NumPy array of int32, how do I convert it to float32 in place? So basically, I would like to do
+
+a = a.astype(numpy.float32)
+without copying the array. It is big.
+
+a = a.astype(numpy.float32, copy=False)
+numpy astype has a copy flag. Why shouldn't we use it ?
+
+
+Once this parameter is supported in a NumPy release, we could of course use it, but currently it's only available in the development branch.
