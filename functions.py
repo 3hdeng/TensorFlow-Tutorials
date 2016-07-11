@@ -12,13 +12,17 @@ def plot_clusters(all_samples, centroids, n_samples_per_cluster):
     # Choose a different colour for each cluster
     import matplotlib.pyplot as plt
     colour = plt.cm.rainbow(np.linspace(0,1,len(centroids)))
+    markers=["x", "o", "+"]
     for i, centroid in enumerate(centroids):
         # Grab just the samples fpr the given cluster and plot them out with a new colour
         samples = all_samples[i*n_samples_per_cluster:(i+1)*n_samples_per_cluster]
         plt.scatter(samples[:,0], samples[:,1], c=colour[i])
         # Also plot centroid
-        plt.plot(centroid[0], centroid[1], markersize=35, marker="x", color='k', mew=10)
-        plt.plot(centroid[0], centroid[1], markersize=30, marker="x", color='m', mew=5)
+        
+        #plt.plot(centroid[0], centroid[1], markersize=35, marker="x"+str(i), color='k', mew=10)
+        #ValueError: Unrecognized marker style x0
+        plt.plot(centroid[0], centroid[1], markersize=35, marker=markers[i], color='k', mew=10)
+        plt.plot(centroid[0], centroid[1], markersize=30, marker=markers[i], color='m', mew=5)
     plt.show()
     
 
@@ -40,3 +44,15 @@ def create_samples(n_clusters, n_samples_per_cluster, n_features, embiggen_facto
     centroids = tf.concat(0, centroids, name='centroids')
     return centroids, samples
     
+    
+#============
+def choose_random_centroids(samples, n_clusters):
+    # Step 0: Initialisation: Select `n_clusters` number of random points
+    n_samples = tf.shape(samples)[0]
+    random_indices = tf.random_shuffle(tf.range(0, n_samples))
+    begin = [0,]
+    size = [n_clusters,]
+    size[0] = n_clusters
+    centroid_indices = tf.slice(random_indices, begin, size)
+    initial_centroids = tf.gather(samples, centroid_indices)
+    return initial_centroids
