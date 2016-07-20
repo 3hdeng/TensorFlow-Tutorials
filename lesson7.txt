@@ -50,3 +50,11 @@ if the distance between the old centroids and the new centroids is less than a g
 
 3) Our example trains on just a single example at a time, which is inefficient. 
 Extend it to learn using a number (say, 50) of training samples at a time.
+
+
+//===
+Any machine learning library must have a gradient descent algorithm. I think it is a law.
+
+Gradient Descent is a learning algorithm that attempts to minimise some error. 
+
+
