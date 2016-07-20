@@ -25,7 +25,7 @@ train_op = tf.train.GradientDescentOptimizer(0.01).minimize(error)
 
 # Normal TensorFlow - initialize values, create a session and run the model
 model = tf.initialize_all_variables()
-
+errors=[]
 with tf.Session() as session:
     session.run(model)
     for i in range(1000):
@@ -33,9 +33,17 @@ with tf.Session() as session:
         y_value = x_value * 2 + 6
         # session.run(train_op, feed_dict={x: x_value, y: y_value})
         _, error_value = session.run([train_op, error], feed_dict={x: x_value, y: y_value})
+        errors.append(error_value)
+        
         
     w_value = session.run(w)
     print("Predicted model: {a:.3f}x + {b:.3f}".format(a=w_value[0], b=w_value[1]))
+
+import matplotlib.pyplot as plt
+plt.plot( [np.mean(errors[i-50:i]) for i in range(1, len(errors)) ] )
+plt.show()
+plt.savefig("errors.png")
+
 
 """
 The major line of interest here is train_op = tf.train.GradientDescentOptimizer(0.01).minimize(error) 
@@ -61,6 +69,9 @@ RMSPropOptimizer
 
 Other optimisation methods are likely to appear in future releases of TensorFlow, or in third-party code. 
 
-If you aren’t sure which one to use, use GradientDescentOptimizer unless that is failing.
+If you are not sure which one to use, use GradientDescentOptimizer unless that is failing.
+
+SyntaxError: Non-ASCII character '\xe2' in file gd_optimizer1.py on line 72, 
+but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
 
 """
