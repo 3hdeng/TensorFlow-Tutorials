@@ -1,0 +1,52 @@
+http://learningtensorflow.com/lesson7/
+loop and convergence example:
+
+import tensorflow as tf
+
+x = tf.Variable(0., name='x')
+threshold = tf.constant(5.)
+
+model = tf.initialize_all_variables()
+
+with tf.Session() as session:
+    session.run(model)
+    while session.run(tf.less(x, threshold)):
+        x = x + 1
+        x_value = session.run(x)
+        print(x_value)
+
+The major change here is that the loop is now a while loop, 
+continuing to loop while the test (using tf.less for a less-than-test) is true. 
+
+Here, we test if x is less than a given threshold (stored in a constant), 
+and if so, we continue looping.
+
+
+
+//===
+errors = []
+with tf.Session() as session:
+    session.run(model)
+    for i in range(1000):
+        x_train = tf.random_normal((1,), mean=5, stddev=2.0)
+        y_train = x_train * 2 + 6
+        x_value, y_value = session.run([x_train, y_train])
+        _, error_value = session.run([train_op, error], feed_dict={x: x_value, y: y_value})
+        errors.append(error_value)
+    w_value = session.run(w)
+    print("Predicted model: {a:.3f}x + {b:.3f}".format(a=w_value[0], b=w_value[1]))
+
+import matplotlib.pyplot as plt
+plt.plot([np.mean(errors[i-50:i]) for i in range(len(errors))])
+plt.show()
+plt.savefig("errors.png")
+
+
+Exercises
+1) Create a convergence function for the k-means example from Lesson 6, which stops the training 
+if the distance between the old centroids and the new centroids is less than a given epsilon value.
+
+2) Try separate the a and b values from the Gradient Descent example (where w is used).
+
+3) Our example trains on just a single example at a time, which is inefficient. 
+Extend it to learn using a number (say, 50) of training samples at a time.
