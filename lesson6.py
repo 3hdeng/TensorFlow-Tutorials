@@ -42,17 +42,22 @@ nearest_indices = assign_to_nearest(samples, initial_centroids)
 updated_centroids = update_centroids(samples, nearest_indices, n_clusters)
 diff= tf.sub(updated_centroids, data_centroids)
 distance = tf.reduce_sum( tf.square(diff))
-          
+threshold= tf.constant(1.5)
+
 model = tf.initialize_all_variables()
 with tf.Session() as session:
     sample_values = session.run(samples)
     centroid_values= session.run(data_centroids)
     print(centroid_values)
-    for i in range(100) :
-      updated_centroids_value = session.run(updated_centroids)
-      distance_value=session.run(distance)
-      #print(updated_centroids_value)
-      print(distance_value)
-      nearest_indices = assign_to_nearest(samples, updated_centroids)
+    for i in range(1000) :
+      if session.run(tf.less(distance, threshold)):
+        print("distance lower than th, break on ", i)  
+        break
+      else:
+        [updated_centroids_value , distance_value]= session.run([updated_centroids, distance])
+        # distance_value=session.run(distance)
+        #print(updated_centroids_value)
+        print(distance_value)
+        nearest_indices = assign_to_nearest(samples, updated_centroids)
 
 
