@@ -1,0 +1,37 @@
+//=== http://learningtensorflow.com/lesson8/
+The very talented Jake VanderPlas has done some excellent work in 
+using SciPy and NumPy to update a given state in the Game of Life. 
+His write up is worth reading and is available 
+https://jakevdp.github.io/blog/2013/08/07/conways-game-of-life/
+
+//=== update rules
+If the cell is alive, but has one or zero neighbours, it “dies” through “under-population.
+If the cell is alive and has two or three neighbours, it stays alive.
+If the cell has more than three neighbours it dies through over-population.
+Any dead cell with three neighbours regenerates.
+
+
+//===
+the convolve2d line identifies how many neighbours each cell has 
+(this is a common operator in computer vision). 
+
+
+import numpy as np
+from scipy.signal import convolve2d
+
+def update_board(X):
+    # Check out the details at: https://jakevdp.github.io/blog/2013/08/07/conways-game-of-life/
+    # Compute number of neighbours,
+    N = convolve2d(X, np.ones((3, 3)), mode='same', boundary='wrap') - X
+    # Apply rules of the game
+    X = (N == 3) | (X & (N == 2))
+    return X
+    
+The update_board function is a function on NumPy arrays. It won’t work on Tensors, 
+and to date, there isn’t a good way to do this in TensorFlow 
+(you can definitely write it yourself though using the existing tools, it just isn’t straight-forward).
+
+
+In version 0.7 of TensorFlow, a new feature 
+py_func was added that allows us to take a python function and turn it into a node in TensorFlow
+
