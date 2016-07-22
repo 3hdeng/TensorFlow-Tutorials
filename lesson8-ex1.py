@@ -36,6 +36,7 @@ imgplot = plt.imshow(x_value, cmap='Greys',  interpolation='nearest')
 def game_of_life(*args):
     X = session.run(board_update, feed_dict={board: x_value})[0]
     # ??? UnboundLocalError: local variable 'X' referenced before assignment
+    # recursive fucntion call lead to UnboundLocalError: local variable 'X' referenced before assignment
     imgplot.set_array(X)
     return imgplot,
 
