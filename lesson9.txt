@@ -1,0 +1,149 @@
+lesson9.txt
+http://learningtensorflow.com/lesson9/
+
+
+Machine Learning is the idea that you build algorithms that learn from data
+
+$ sudo pip install sklearn
+
+Scikit-learn is a Python package for data mining and analysis, and it is incredibly popular. 
+This is due to its wide support for different algorithms, 
+its amazing documentation, and its large and active community. 
+
+One of the other factors is its consistent interface, 
+its API, 
+
+take a look at scikit-learn’s API in practice, 
+first we need some data. 
+The following code loads a bunch of digit images that can be shown with matplotlib.pyplot:
+
+from sklearn.datasets import load_digits
+from matplotlib import pyplot as plt
+
+digits = load_digits()
+
+We can show one of these images using pyplot.imshow. 
+Here I set interpolation='none' to see the data exactly as it is, 
+but if you remove this attribute, it becomes a little clearer to see (also try reducing the figure size).
+
+fig = plt.figure(figsize=(3, 3))
+
+plt.imshow(digits['images'][66], cmap="gray", interpolation='none')
+
+plt.show()
+plt.savefig("lesson8-digits.png")
+
+In scikit-learn, we can build a simple classifier, train it, and then use it 
+to predict the number of an image, using just four lines of code:
+
+from sklearn import svm
+classifier = svm.SVC(gamma=0.001)
+classifier.fit(digits.data, digits.target)
+predicted = classifier.predict(digits.data)
+
+The first line simply imports the Support Vector Machine model,
+which is a popular machine learning method.
+
+The second line builds a “blank” classifier, with the gamma value set to 0.001.
+
+The third line uses the data to train the model. 
+In this line (which is the bulk of the “work” for this code), 
+the internal state of the SVM model is adjusted to best suit the training data. 
+We also pass digits.data, as this is a flat array, the accepted input from this algorithm. 
+
+ 
+The potential problem is called “overfitting”, 
+where the model learns exactly what it needs to for the training data, 
+but is unable to predict well on new unseen data. T
+
+
+To address this, we need to split our training and testing data:
+
+from sklearn.cross_validation import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+-->
+http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.train_test_split.html
+
+
+//=== skflow,  TensorFlowLinearClassifier
+WARNING:tensorflow:TensorFlowLinearClassifier class is deprecated. 
+Please consider using LinearClassifier as an alternative.
+
+
+from tensorflow.contrib import skflow
+n_classes = len(set(y_train))
+classifier = skflow.TensorFlowLinearClassifier(n_classes=n_classes)
+classifier.fit(X_train, y_train)
+
+y_pred = classifier.predict(X_test)
+
+
+The results can be evaluated as before, to compute the accuracy, 
+but scikit-learn has classification_report, which offers a much more in-depth look:
+
+from sklearn import metrics
+print(metrics.classification_report(y_true=y_test, y_pred=y_pred))
+
+The result shows you to the recall and precision for each class, 
+as well as the overall values and f-measure. 
+https://en.wikipedia.org/wiki/F1_score
+
+//=== http://stackoverflow.com/questions/15181867/understanding-the-set-function
+>>> x = [1, 1, 2, 2, 2, 2, 2, 3, 3]
+>>> set(x)
+set([1, 2, 3])
+
+>>> y = [1, 1, 6, 6, 6, 6, 6, 8, 8]
+>>> set(y)
+set([8, 1, 6])
+
+>>> z = [1, 1, 6, 6, 6, 6, 6, 7, 7]
+>>> set(z)
+set([1, 6, 7])
+
+Sets are unordered
+
+if you'd like to sort them, you can simply perform:
+sorted(set(y))
+
+
+//===
+WARNING:tensorflow:TensorFlowDNNClassifier class is deprecated. Please consider using DNNClassifier as an alternative.
+Traceback (most recent call last):
+  File "lesson9.py", line 52, in <module>
+    classifier = skflow.TensorFlowDNNClassifier(n_classes=n_classes)
+  File "/usr/local/lib/python2.7/dist-packages/tensorflow/contrib/learn/python/learn/estimators/base.py", line 452, in __init__
+    super(DeprecatedMixin, self).__init__(*args, **kwargs)
+TypeError: __init__() takes at least 2 arguments (2 given)
+
+
+//=== skflow
+https://github.com/tensorflow/skflow
+
+SkFlow has been moved to 
+http://github.com/tensorflow/tensorflow into contrib folder specifically located 
+-->
+https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/learn/python/learn
+
+import tensorflow.contrib.learn as skflow
+
+classifier = skflow.TensorFlowEstimator(model_fn=conv_model, n_classes=10,
+                                        steps=500, learning_rate=0.05,
+                                        batch_size=128)
+                                        
+                                        
+-->
+https://www.tensorflow.org/versions/r0.9/tutorials/tflearn/index.html
+
+new skflow.DNNClassifier/LinearClassifier need to set steps count to stop , 
+otherwise it seems to run forever until convergence???
+classifier = skflow.DNNClassifier(hidden_units=[10, 20, 10], n_classes=n_classes)
+classifier.fit(X_train, y_train,steps=200)
+
+https://www.tensorflow.org/versions/r0.9/tutorials/tflearn/index.html
+
+
+//=== DNNClassifier
+https://www.tensorflow.org/versions/r0.9/api_docs/python/contrib.learn.html#DNNClassifier
+
+http://terrytangyuan.github.io/2016/03/14/scikit-flow-intro/
