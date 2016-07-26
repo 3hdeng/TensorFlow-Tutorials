@@ -1,0 +1,5 @@
+//=== https://www.tensorflow.org/versions/r0.9/api_docs/python/framework.html#DType
+
+in addition, variants of these types with the _ref suffix are defined for reference-typed tensors.
+
+The tf.as_dtype() function converts numpy types and string type names to a DType object.

@@ -44,19 +44,19 @@ predicted = classifier.predict(X_test)
 print(np.mean(y_test == predicted))
 
 
-
+#=========== 
 from tensorflow.contrib import skflow
 n_classes = len(set(y_train))
 print(n_classes)
 # classifier = skflow.TensorFlowLinearClassifier(n_classes=n_classes)
 # xxx classifier = skflow.TensorFlowDNNClassifier(n_classes=n_classes)
  # Build 3 layer DNN with 10, 20, 10 units respectively.
-classifier = skflow.DNNClassifier(hidden_units=[10, 20, 10], n_classes=n_classes)
+classifier = skflow.DNNClassifier(hidden_units=[20, 20, 10], n_classes=n_classes)
 # optimizer=tf.train.ProximalAdagradOptimizer(
 #      learning_rate=0.1,
 #      l1_regularization_strength=0.001
 #    ))
-classifier.fit(X_train, y_train,steps=200)    
+classifier.fit(X_train, y_train,steps=1000)    
 
 y_pred = classifier.predict(X_test)
 
