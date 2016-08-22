@@ -2,6 +2,12 @@ import tensorflow as tf
 import numpy as np
 import input_data
 
+# randomly initialize nn for [encoder+bias]/[decoder+ bias]
+# via training, hope to automatically adjusting weights/biases to achieve 
+# reconstruction/restoration/decoding with min cost
+# Tensorflow aymeric 
+# https://github.com/aymericdamien/TensorFlow-Examples/blob/master/examples/3_NeuralNetworks/autoencoder.py
+
 mnist_width = 28
 n_visible = mnist_width * mnist_width
 n_hidden = 500

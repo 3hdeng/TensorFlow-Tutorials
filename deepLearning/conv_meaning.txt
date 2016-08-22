@@ -1,0 +1,5 @@
+Note that the term “convolution” could corresponds to different mathematical operations:
+theano.tensor.nnet.conv2d, which is the most common one in almost all of the recent published convolutional models. In this operation, each output feature map is connected to each input feature map by a different 2D filter, and its value is the sum of the individual convolution of all inputs through the corresponding filter.
+The convolution used in the original LeNet model: In this work, each output feature map is only connected to a subset of input feature maps.
+The convolution used in signal processing: theano.tensor.signal.conv.conv2d, which works only on single channel inputs.
+Here, we use the first operation, so this models differ slightly from the original LeNet paper. One reason to use 2. would be to reduce the amount of computation needed, but modern hardware makes it as fast to have the full connection pattern. Another reason would be to slightly reduce the number of free parameters, but we have other regularization techniques at our disposal.
