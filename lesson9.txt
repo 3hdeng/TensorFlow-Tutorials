@@ -147,3 +147,12 @@ https://www.tensorflow.org/versions/r0.9/tutorials/tflearn/index.html
 https://www.tensorflow.org/versions/r0.9/api_docs/python/contrib.learn.html#DNNClassifier
 
 http://terrytangyuan.github.io/2016/03/14/scikit-flow-intro/
+
+
+//=== conv2d
+
+ $ python cifar-ex1.py
+WARNING:tensorflow:Input iterator is exhausted: .
+^C^CERROR:tensorflow:Got exception during tf.learn final checkpoint .
+Traceback (most recent call last):
+

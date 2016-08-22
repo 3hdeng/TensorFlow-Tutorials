@@ -3,11 +3,13 @@
 import tensorflow as tf
 import numpy as np
 
-trX = np.linspace(-1, 1, 101)
+trX = np.linspace(-1, 1, 1001)
+# [-1,0, 1, 2, ...100]
 # trX is a numpy.ndarray of shape (101,)
 # trX.shape=(101,), shape : tuple of ints
 
 # xxx print(typeof trX)
+# f(arg1,arg2, *argx, **karg)
 print(type(trX))
 
 trY = 2 * trX + np.random.randn(*trX.shape) * 0.33 # create a y value which is approximately linear but with some random noise

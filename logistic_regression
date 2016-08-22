@@ -48,7 +48,7 @@ Logistic regression measures the relationship between
  the categorical dependent variable and one or more independent variables 
  by estimating probabilities using a logistic function, which is the cumulative logistic distribution.
  
-"Logistic regression" assumes a standard logistic distribution of errors and 
+*** "Logistic regression" assumes a standard logistic distribution of errors and 
 "Probit regression" assumes a standard normal distribution of errors
 
 
@@ -71,7 +71,8 @@ hence termed "latent". (The observed data are values of y and x)
 Unlike ordinary regression, however, the \beta  parameters cannot be expressed 
 by any direct formula of the y and x values in the observed data.
 y=\beta_0 + beta_1*x
-y'= y + \epsilon
+y'= y + \epsilon = b0 + b1*x + err
+
 
 
 //=== logistic function (sigma)
@@ -81,10 +82,10 @@ sigma(t)= 1/(1+ exp(-t))
 t= b0+ b1*x
 
 * logistic function can now be written as:
- F(x)= 1/[1+exp-(\beta _{0}+\beta _{1}x)]
+ F(x)= 1/[1+exp-(\beta _{0}+\beta _{1}x + e)]
  
 * logit function(log odds) (inverse of logistic function) 
- g(F)= ln[F/(1-F)] = b0 + b1*x
+ g(F)= ln[F/(1-F)] = b0 + b1*x + e'
  
  In mathematical modelling and statistical modelling, 
  there are dependent and independent variables. 

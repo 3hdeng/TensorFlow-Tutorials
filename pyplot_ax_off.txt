@@ -1,0 +1,44 @@
+//=== http://stackoverflow.com/questions/25862026/turn-off-axes-in-subplots
+Rather than using plt.axis('off') you should use ax.axis('off') 
+where ax is a matplotlib.axes object. 
+
+The code below shows the result (I've removed the prune_matrix part because I don't have access to that function, in the future please submit fully working code.)
+
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import matplotlib.cm as cm
+
+img = mpimg.imread("stewie.jpg")
+
+f, axarr = plt.subplots(2, 2)
+axarr[0,0].imshow(img, cmap = cm.Greys_r)
+axarr[0,0].set_title("Rank = 512")
+axarr[0,0].axis('off')
+
+axarr[0,1].imshow(img, cmap = cm.Greys_r)
+axarr[0,1].set_title("Rank = %s" % 128)
+axarr[0,1].axis('off')
+
+axarr[1,0].imshow(img, cmap = cm.Greys_r)
+axarr[1,0].set_title("Rank = %s" % 32)
+axarr[1,0].axis('off')
+
+axarr[1,1].imshow(img, cmap = cm.Greys_r)
+axarr[1,1].set_title("Rank = %s" % 16)
+axarr[1,1].axis('off')
+
+plt.show()
+
+
+//===  gray scale
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
+
+fname = 'image.png'
+image = Image.open(fname).convert("L")
+arr = np.asarray(image)
+plt.imshow(arr, cmap='Greys_r')
+plt.show()
+
+More simple no include need: plt.imshow(arr,cmap='gray') 

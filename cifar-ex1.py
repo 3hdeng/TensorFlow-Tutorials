@@ -40,7 +40,7 @@ def load_cifar(file):
         cifar = pickle.load(inf) #, encoding='latin1')
     data = cifar['data'].reshape((10000, 3, 32, 32))
     data = np.rollaxis(data, 3, 1)
-    data = np.rollaxis(data, 3, 1)
+    data = np.rollaxis(data, 3, 1) # --> 10000, 32, 32, 3
     y = np.array(cifar['labels'])
     # Just get 2s versus 9s to start
     # Remove these lines when you want to build a big model
@@ -78,11 +78,13 @@ n_classes=10
 # http://terrytangyuan.github.io/2016/03/14/scikit-flow-intro/
 
 def conv_model(X, y):
-    X = tf.expand_dims(X, 3)
+    # X = tf.expand_dims(X, 3)
     features = tf.reduce_max(learn.ops.conv2d(X, 12, [3, 3]), [1, 2])
     features = tf.reshape(features, [-1, 12])
     return learn.models.logistic_regression(features, y)
 
+# learn.ops.conv2d deprecated(date="2016-08-15",
+#            instructions="Please use tf.contrib.layers.conv2d instead.")
 
 # Create a classifier, train and predict.
 classifier = learn.TensorFlowEstimator(model_fn=conv_model, n_classes=10,
