@@ -16,7 +16,7 @@ def init_weights(shape):
     return tf.Variable(tf.random_normal(shape, stddev=0.01))
 
 
-def model(X, w, w2, w3, w4, w_o, showimg=False, i_tensor=0, sess=None):
+def model(X, w, w2, w3, w4, w_o, showimg=False, i_tensor=0):
     l1a = tf.nn.relu(tf.nn.conv2d(X, w,                       # l1a shape=(?, 28, 28, 32)
                         strides=[1, 1, 1, 1], padding='SAME'))
     #l1 = tf.nn.max_pool(l1a, ksize=[1, 2, 2, 1],              # l1 shape=(?, 14, 14, 32)
@@ -44,25 +44,26 @@ def model(X, w, w2, w3, w4, w_o, showimg=False, i_tensor=0, sess=None):
         #====================================
         print 'showimg is True, save the conved imges' 
         # plot original image and first and second components of output
-        fig = pyplot.figure()
-        ax = fig.add_subplot(131)
-        ax.axis('off');
-        pyplot.imshow(X.eval(session=sess)[0,:, :, 1]) #, cmap='gray')
+        #fig = pyplot.figure()
+        #ax = fig.add_subplot(131)
+        #ax.axis('off');
+        #pyplot.imshow(X.eval(session=sess)[0,:, :, 1]) #, cmap='gray')
         
         # recall that the convOp output (filtered image) is actually a "minibatch",
         # of size 1 here, so we take index 0 in the first dimension:
-        ax=fig.add_subplot(132); ax.axis('off'); pyplot.imshow(l1a[0, :, :,0])#, cmap='gray')
-        ax=fig.add_subplot(133); ax.axis('off'); pyplot.imshow(l1a[0, :, :, 30])#, cmap='gray')
-        pyplot.savefig('l1a_{0}.jpg'.format(i_tensor) )
+        #ax=fig.add_subplot(132); ax.axis('off'); pyplot.imshow(l1a[0, :, :,0])#, cmap='gray')
+        #ax=fig.add_subplot(133); ax.axis('off'); pyplot.imshow(l1a[0, :, :, 30])#, cmap='gray')
+        #pyplot.savefig('l1a_{0}.jpg'.format(i_tensor) )
         #====================================
-        
+        return 1
+    
     def if_false():
-       return
+       return 0
        
     #============
-    control_flow_ops.cond(tf.Variable(showimg), if_true, if_false)
+    #control_flow_ops.cond(tf.Variable(showimg), if_true, if_false)
     #============   
-    return pyx
+    return pyx, X[0,:, :, 1], [l1a[0, :, :,0] , l1a[0, :, :, 30] ]
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 trX, trY, teX, teY = mnist.train.images, mnist.train.labels, mnist.test.images, mnist.test.labels
@@ -93,6 +94,24 @@ train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
 predict_op = tf.argmax(py_x, 1)
 
 
+#=========
+def myplot(X_val, L1a_val,i):    
+        #====================================
+        print 'showimg is True, save the conved imges' 
+        # plot original image and first and second components of output
+        fig = pyplot.figure()
+        ax = fig.add_subplot(131)
+        ax.axis('off');
+        pyplot.imshow(X_val) #, cmap='gray')
+        
+        # recall that the convOp output (filtered image) is actually a "minibatch",
+        # of size 1 here, so we take index 0 in the first dimension:
+        ax=fig.add_subplot(132); ax.axis('off'); pyplot.imshow(L1a_val[0])#, cmap='gray')
+        ax=fig.add_subplot(133); ax.axis('off'); pyplot.imshow(L1a_val[1])#, cmap='gray')
+        pyplot.savefig('l1a_{0}.jpg'.format(i) )
+        fig.close()
+        return
+#====================================
 
 # Launch the graph in a session
 with tf.Session() as sess:
@@ -108,8 +127,8 @@ with tf.Session() as sess:
         test_indices = np.arange(len(teX)) # Get A Test Batch
         np.random.shuffle(test_indices)
         test_indices = test_indices[0:test_size]
-       
-        print(i, np.mean(np.argmax(teY[test_indices], axis=1) ==
-                sess.run(predict_op, feed_dict={sess: sess, showimg:True, i_tensor: i, X: teX[test_indices],  Y: teY[test_indices]})))
-                
+        pyx,X_val, L1a_val=    sess.run(predict_op, feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
+        print(i, np.mean(np.argmax(teY[test_indices], axis=1) == pyx) )
+                          # sess.run(predict_op, feed_dict={sess: sess, showimg:True, i_tensor: i, X: teX[test_indices],  Y: teY[test_indices]})))
+        myplot(X_val, L1a_val, i)        
 
