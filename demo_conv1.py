@@ -87,7 +87,7 @@ w_o = init_weights([64, 10])         # FC 128 inputs, 10 outputs (labels)
 w2=[]
 w3=[]
 
-py_x = model(X, w, w2, w3, w4, w_o)
+py_x, X_val, L1a_val = model(X, w, w2, w3, w4, w_o)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y))
 train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
@@ -127,8 +127,13 @@ with tf.Session() as sess:
         test_indices = np.arange(len(teX)) # Get A Test Batch
         np.random.shuffle(test_indices)
         test_indices = test_indices[0:test_size]
-        pyx,X_val, L1a_val=    sess.run(predict_op, feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
+        pyx=    sess.run(predict_op, feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
+        # will L1a_val reflect the change of weightings ?
         print(i, np.mean(np.argmax(teY[test_indices], axis=1) == pyx) )
                           # sess.run(predict_op, feed_dict={sess: sess, showimg:True, i_tensor: i, X: teX[test_indices],  Y: teY[test_indices]})))
+        print type(X_val)
+        print X_val.shape()
+        print type(L1a_val)
+        print L1a_val.shape()
         myplot(X_val, L1a_val, i)        
 
