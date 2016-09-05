@@ -16,7 +16,7 @@ def init_weights(shape):
     return tf.Variable(tf.random_normal(shape, stddev=0.01))
 
 
-def model(X, w, w2, w3, w4, w_o, showimg=False, i_tensor=0):
+def model(X, w, w2, w3, w4, w_o, showimg=False, i_tensor=0, sess=None):
     l1a = tf.nn.relu(tf.nn.conv2d(X, w,                       # l1a shape=(?, 28, 28, 32)
                         strides=[1, 1, 1, 1], padding='SAME'))
     #l1 = tf.nn.max_pool(l1a, ksize=[1, 2, 2, 1],              # l1 shape=(?, 14, 14, 32)
@@ -47,13 +47,13 @@ def model(X, w, w2, w3, w4, w_o, showimg=False, i_tensor=0):
         fig = pyplot.figure()
         ax = fig.add_subplot(131)
         ax.axis('off');
-        pyplot.imshow(X[0,:, :, 1]) #, cmap='gray')
+        pyplot.imshow(X.eval(session=sess)[0,:, :, 1]) #, cmap='gray')
         
         # recall that the convOp output (filtered image) is actually a "minibatch",
         # of size 1 here, so we take index 0 in the first dimension:
         ax=fig.add_subplot(132); ax.axis('off'); pyplot.imshow(l1a[0, :, :,0])#, cmap='gray')
         ax=fig.add_subplot(133); ax.axis('off'); pyplot.imshow(l1a[0, :, :, 30])#, cmap='gray')
-        pyplot.savefig('l1a_{0}.jpg'.format(i_tensor.eval()))
+        pyplot.savefig('l1a_{0}.jpg'.format(i_tensor) )
         #====================================
         
     def if_false():
@@ -110,6 +110,6 @@ with tf.Session() as sess:
         test_indices = test_indices[0:test_size]
        
         print(i, np.mean(np.argmax(teY[test_indices], axis=1) ==
-                sess.run(predict_op, feed_dict={showimg:True, i_tensor: i, X: teX[test_indices],  Y: teY[test_indices]})))
+                sess.run(predict_op, feed_dict={sess: sess, showimg:True, i_tensor: i, X: teX[test_indices],  Y: teY[test_indices]})))
                 
 
