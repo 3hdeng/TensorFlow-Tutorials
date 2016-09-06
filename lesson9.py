@@ -12,6 +12,7 @@ digits = load_digits()
 print(digits.data.shape)
 
 fig = plt.figure(figsize=(3, 3))
+#figsize w,h tuple in inches
 
 plt.imshow(digits['images'][66], cmap="gray", interpolation='none')
 
