@@ -35,10 +35,13 @@ def model(X, w, w2, w3, w4, w_o):
     #saver = tf.train.Saver({"my_Xval": X[0,:, :, 1], "my_L1a":l1a[0, :, :, 15]})
     #save_path = saver.save(sess, "tmp/myVars.ckpt") 
     # print("Model saved in file: %s" % save_path)
-    l1a_0=tf.slice(l1a,[0,0,0,0], [1,-1, -1, 1]) # tf.slice(arr, begin, size)
-    l1a_15=tf.slice(l1a,[0,0,0,15], [1,-1, -1, 1])
+    shape0=tf.shape(l1a)
+    shape1=tf.slice(tf.shape(l1a),[1],[2]) # [?,28,28,16] --> [28,28]
+    shape1=tf.concat(0,[[1], shape1]) # --> [1,28,28]
+    l1a_0=tf.reshape(tf.slice(l1a,[0,0,0,0], [1,-1, -1, 1]), shape1) # tf.slice(arr, begin, size)
+    l1a_15=tf.reshape(tf.slice(l1a,[0,0,0,15], [1,-1, -1, 1]),shape1)
     l1a_sample=tf.concat(0, [l1a_0, l1a_15])
-    return pyx,  l1a_sample # xxxx [l1a[0, :, :,0] , l1a[0, :, :, 15] ]
+    return pyx,  l1a_sample, shape0 # xxxx [l1a[0, :, :,0] , l1a[0, :, :, 15] ]
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 trX, trY, teX, teY = mnist.train.images, mnist.train.labels, mnist.test.images, mnist.test.labels
@@ -58,7 +61,7 @@ w_o = init_weights([32, 10])         # FC 128 inputs, 10 outputs (labels)
 w2=[]
 w3=[]
 
-py_x,  L1a_sample = model(X, w, w2, w3, w4, w_o)
+py_x,  L1a_sample, shape0 = model(X, w, w2, w3, w4, w_o)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y))
 train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
@@ -94,16 +97,18 @@ for i in range(100):
         training_batch = zip(range(0, len(trX), batch_size),
                              range(batch_size, len(trX), batch_size))
         for start, end in training_batch:
-            result=sess.run([py_x, L1a_sample], feed_dict={X: trX[start:end], Y: trY[start:end] })
+            result=sess.run([py_x, L1a_sample, shape0], feed_dict={X: trX[start:end], Y: trY[start:end] })
             # xxx X_val= sess.run(X[0,:,:,1].eval(session=sess) # X.eval(session=sess, feed_dict={X: trX[start:end]})[0,:,:,1]
             X_val=trX[start][:, :, 0]
             L1a_val=result[1] #[0,:,:,0:1]
+            L1a_shape=result[2]
+            print L1a_shape
             #train_val=sess.run(train_op)
             #result=sess.run([train_op, X_sample, L1a_sample], feed_dict={X: trX[start:end], Y: trY[start:end] })
             #train_val, X_val, L1a_val
             print type(L1a_val)
             print L1a_val.shape
-            myplot(X_val, L1a_val[1], start) 
+            myplot(X_val, L1a_val, start) 
             
         test_indices = np.arange(len(teX)) # Get A Test Batch
         np.random.shuffle(test_indices)
