@@ -93,37 +93,38 @@ def myplot(X_val, L1a_val,i):
 # you need to initialize all variables
 tf.initialize_all_variables().run(session=sess)
 
-for i in range(100):
+X_val=[]
+L1a_val=[]
+
+for i in range(10):
         training_batch = zip(range(0, len(trX), batch_size),
                              range(batch_size, len(trX), batch_size))
+        t=0
         for start, end in training_batch:
-            result=sess.run([py_x, L1a_sample, shape0], feed_dict={X: trX[start:end], Y: trY[start:end] })
-            # xxx X_val= sess.run(X[0,:,:,1].eval(session=sess) # X.eval(session=sess, feed_dict={X: trX[start:end]})[0,:,:,1]
+            result=sess.run([train_op, py_x, L1a_sample, shape0], feed_dict={X: trX[start:end], Y: trY[start:end] })
             X_val=trX[start][:, :, 0]
-            L1a_val=result[1] #[0,:,:,0:1]
-            L1a_shape=result[2]
-            print L1a_shape
+            L1a_val=result[2] #[0,:,:,0:1]
+            L1a_shape=result[3]
+            #print L1a_shape
             #train_val=sess.run(train_op)
-            #result=sess.run([train_op, X_sample, L1a_sample], feed_dict={X: trX[start:end], Y: trY[start:end] })
-            #train_val, X_val, L1a_val
-            print type(L1a_val)
-            print L1a_val.shape
-            myplot(X_val, L1a_val, start) 
+            #print type(L1a_val)
+            #print L1a_val.shape
+            print t
+            t += 1
             
+        myplot(X_val, L1a_val, i) 
+         
+          
         test_indices = np.arange(len(teX)) # Get A Test Batch
         np.random.shuffle(test_indices)
         test_indices = test_indices[0:test_size]
-        #result=    sess.run([predict_op, X_sample, L1a_sample], feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
-        #predict_val=resutl[0]
-        #X_val=result[1]
-        #L1a_val=result[2]
+        result=    sess.run([predict_op, L1a_sample], feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
+        pyx=result[0]
+        X_val=teX[test_indices[0]][:, :, 0]
+        L1a_val=result[1]
         # will L1a_val reflect the change of weightings ?
-        #print(i, np.mean(np.argmax(teY[test_indices], axis=1) == pyx) )
-                          # sess.run(predict_op, feed_dict={sess: sess, showimg:True, i_tensor: i, X: teX[test_indices],  Y: teY[test_indices]})))
-        print type(X_val)
-        #print X_val.shape()
-        print type(L1a_val)
-        #print L1a_val.shape()
-        myplot(X_val, L1a_val, i)        
+        print(i, np.mean(np.argmax(teY[test_indices], axis=1) == pyx) )
+        myplot(X_val, L1a_val, "test"+ str(i))
+        
 
 sess.close()
