@@ -36,8 +36,9 @@ def model(X, w, w2, w3, w4, w_o):
     #save_path = saver.save(sess, "tmp/myVars.ckpt") 
     # print("Model saved in file: %s" % save_path)
     l1a_0=tf.slice(l1a,[0,0,0,0], [1,-1, -1, 1]) # tf.slice(arr, begin, size)
-    l1a_15=tf.slice(l1a,[0,0,0,0], [1,-1, -1, 15])
-    return pyx,  [l1a_0, l1a_15] # xxxx [l1a[0, :, :,0] , l1a[0, :, :, 15] ]
+    l1a_15=tf.slice(l1a,[0,0,0,15], [1,-1, -1, 1])
+    l1a_sample=tf.concat(0, [l1a_0, l1a_15])
+    return pyx,  l1a_sample # xxxx [l1a[0, :, :,0] , l1a[0, :, :, 15] ]
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 trX, trY, teX, teY = mnist.train.images, mnist.train.labels, mnist.test.images, mnist.test.labels
@@ -96,13 +97,13 @@ for i in range(100):
             result=sess.run([py_x, L1a_sample], feed_dict={X: trX[start:end], Y: trY[start:end] })
             # xxx X_val= sess.run(X[0,:,:,1].eval(session=sess) # X.eval(session=sess, feed_dict={X: trX[start:end]})[0,:,:,1]
             X_val=trX[start][:, :, 0]
-            L1a_val=result[1][1] #[0,:,:,0:1]
+            L1a_val=result[1] #[0,:,:,0:1]
             #train_val=sess.run(train_op)
             #result=sess.run([train_op, X_sample, L1a_sample], feed_dict={X: trX[start:end], Y: trY[start:end] })
             #train_val, X_val, L1a_val
             print type(L1a_val)
             print L1a_val.shape
-            myplot(X_val, L1a_val, start) 
+            myplot(X_val, L1a_val[1], start) 
             
         test_indices = np.arange(len(teX)) # Get A Test Batch
         np.random.shuffle(test_indices)
