@@ -9,6 +9,15 @@ from matplotlib import pyplot
 from tensorflow.python.ops import control_flow_ops
 
 # input numpy ndarray
+def calc_shape(l1a):
+    shape0=l1a.shape
+    #print 'l1a.shape = {0}'.format(shape0)
+    shape1=shape0[1:3] # [?,28,28,16] --> [28,28]
+    #print 'l1a.shape trucated to  {0}'.format(shape1)
+    shape1=np.append([2], shape1)# --> [1,28,28]
+    #print 'l1a.shape trucated and reshaped to  {0}'.format(shape1)
+    return shape1
+    
 def L1a_sampling(l1a):
     """
     shape0=l1a.shape
@@ -39,6 +48,7 @@ with tf.Session() as session:
         print(session.run(l1a_tensor).shape)
         
 #===== use tf.py_func
+shape1= calc_shape(l1a)
 L1a_sample_tensor=tf.py_func(L1a_sampling, [l1a_tensor],[tf.float64])
 with tf.Session() as session:
         session.run(init_op)
@@ -46,6 +56,8 @@ with tf.Session() as session:
         result=session.run(L1a_sample_tensor)
         print type(result)
         #print(session.run(L1a_sample_tensor).shape)
+        L1a_sample=np.reshape(result, shape1)
+        print(L1a_sample.shape)
         
         
 
