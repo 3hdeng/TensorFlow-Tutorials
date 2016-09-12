@@ -35,6 +35,17 @@ init_op = tf.initialize_all_variables()
 
 with tf.Session() as session:
         session.run(init_op)
-        print l1a_tensor.shape
-        #print(session.run(x))
+        #xxx print l1a_tensor.shape
+        print(session.run(l1a_tensor).shape)
+        
+#===== use tf.py_func
+L1a_sample_tensor=tf.py_func(L1a_sampling, [l1a_tensor],[tf.float64])
+with tf.Session() as session:
+        session.run(init_op)
+        #xxx print l1a_tensor.shape
+        result=session.run(L1a_sample_tensor)
+        print type(result)
+        #print(session.run(L1a_sample_tensor).shape)
+        
+        
 
