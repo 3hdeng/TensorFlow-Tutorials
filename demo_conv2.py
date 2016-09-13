@@ -16,15 +16,15 @@ def myplot(X_val, L1a_val, L_val, m, i):
         # plot original image and first and second components of output
         # >9 plot, fig.add_subplot(4,4,11) , index start with 1
         fig = pyplot.figure()
-        ax = fig.add_subplot(3,16,1)
+        ax = fig.add_subplot(5,8,1)
         ax.axis('off');
         pyplot.imshow(X_val[m,:,:,0]) #, cmap='gray')
         
         # recall that the convOp output (filtered image) is actually a "minibatch",
         # of size 1 here, so we take index 0 in the first dimension:
         for k in range(0, 16):
-           ax=fig.add_subplot(3,16,k+17); ax.axis('off'); pyplot.imshow(L1a_val[m,:,:,k])#, cmap='gray')
-           ax=fig.add_subplot(3,16,k+33); ax.axis('off'); pyplot.imshow(L1_val[m,:,:,k])#, cmap='gray')
+           ax=fig.add_subplot(5,8,k+9); ax.axis('off'); pyplot.imshow(L1a_val[m,:,:,k])#, cmap='gray')
+           ax=fig.add_subplot(5,8,k+25); ax.axis('off'); pyplot.imshow(L1_val[m,:,:,k])#, cmap='gray')
         pyplot.savefig('t{0}L1_{1}.jpg'.format(m,i) )
         # fig.close()
         
