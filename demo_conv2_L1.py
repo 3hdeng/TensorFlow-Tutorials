@@ -10,7 +10,7 @@ from tensorflow.python.ops import control_flow_ops
 
 
 #=========
-def myplot(X_val, L1a_val, L_val, m, i):    
+def myplot(X_val, L1a_val, L1_val, m, i):    
         #====================================
         print 'myplot to save the images' 
         # plot original image and first and second components of output

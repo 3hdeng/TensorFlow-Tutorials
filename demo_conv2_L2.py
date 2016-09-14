@@ -10,7 +10,7 @@ from tensorflow.python.ops import control_flow_ops
 
 
 #=========
-def myplot(numFeatures,X_val, L1a_val, L_val, m, i):    
+def myplot(numFeatures,X_val, L2a_val, L2_val, m, i):    
         #====================================
         print 'myplot to save the images' 
         # plot original image and first and second components of output
@@ -24,8 +24,8 @@ def myplot(numFeatures,X_val, L1a_val, L_val, m, i):
         # of size 1 here, so we take index 0 in the first dimension:
         step= numFeatures/8
         for k in range(0, numFeatures, step):
-           ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(L1a_val[m,:,:,k])#, cmap='gray')
-           ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L1_val[m,:,:,k])#, cmap='gray')
+           ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(L2a_val[m,:,:,k])#, cmap='gray')
+           ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L2_val[m,:,:,k])#, cmap='gray')
         pyplot.savefig('t{0}L2_{1}.jpg'.format(m,i) )
         # fig.close()
         

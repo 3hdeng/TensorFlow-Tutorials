@@ -11,7 +11,9 @@ from tensorflow.python.ops import control_flow_ops
 
 
 #=========
-def myplot(numFeatures,X_val, L1a_val, L_val, m, i):    
+def myplot(numFeatures,X_val, La_val, L_val, m, i, layer):   
+        # m , input image index
+        # i, outer training loop index
         #====================================
         print 'myplot to save the images' 
         # plot original image and first and second components of output
@@ -25,9 +27,9 @@ def myplot(numFeatures,X_val, L1a_val, L_val, m, i):
         # of size 1 here, so we take index 0 in the first dimension:
         step= numFeatures/8
         for k in range(0, numFeatures, step):
-           ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(L1a_val[m,:,:,k])#, cmap='gray')
-           ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L1_val[m,:,:,k])#, cmap='gray')
-        pyplot.savefig('t{0}L3_{1}.jpg'.format(m,i) )
+           ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(La_val[m,:,:,k])#, cmap='gray')
+           ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L_val[m,:,:,k])#, cmap='gray')
+        pyplot.savefig('t{0}L{1}_{2}.jpg'.format(m,layer,i) )
         # fig.close()
         
 #====================================
@@ -56,7 +58,7 @@ def init_weights(shape):
     return tf.Variable(tf.random_normal(shape, stddev=0.01))
 
 
-def model(X, w, w2, w3, w4, w_o, showimg=False, dummy=1.0):
+def model(X, w, w2, w3, w4, w_o, showimg=tf.constant(False)):
     l1a = tf.nn.relu(tf.nn.conv2d(X, w,                       # l1a shape=(?, 28, 28, 16)
                         strides=[1, 1, 1, 1], padding='SAME'))
     l1 = tf.nn.max_pool(l1a, ksize=[1, 2, 2, 1],              # l1 shape=(?, 14, 14, 16)
@@ -77,15 +79,17 @@ def model(X, w, w2, w3, w4, w_o, showimg=False, dummy=1.0):
     l4 = tf.nn.relu(tf.matmul(l3_reshape, w4))
     pyx = tf.matmul(l4, w_o)
     
-    dm=tf.Variable(dummy)
+    dm=tf.Variable(1.0)
+    
     def true_action():
        return pyx, l1a, l1, l2a, l2, l3a, l3
     def false_action():
        return  pyx, dm,dm,dm,dm,dm,dm
        
     #============
-    control_flow_ops.cond(tf.Variable(showimg), true_action, false_action)
+    ret=control_flow_ops.cond(showimg, true_action, false_action)
     #return pyx, l1a, l1, l2a, l2, l3a, l3
+    return ret
 
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
@@ -104,9 +108,11 @@ w4 = init_weights([64 * 4 * 4, 128]) # FC 64 * 4 * 4 inputs, 128 outputs
 #w_o = init_weights([625, 10])         # FC 625 inputs, 10 outputs (labels)
 w_o = init_weights([128, 10])         # FC 128 inputs, 10 outputs (labels)
 
-showimg=tf.Variable(False)
-dummy= tf.Variable(1.0) #init_weights([1,1,1])
-py_x, L1a, L1, L2a, L2,  L3a, L3 = model(X, w, w2, w3, w4, w_o, showimg, dummy)
+showimg=tf.Variable(False) #tf.placeholder("bool",shape=(1,)) #tf.Variable(False)
+# dummy= Variable(1.0) #tf.placeholder("float",shape=(1,)) #Variable(1.0) #init_weights([1,1,1])
+#x = tf.Variable(0, name='x')
+
+py_x, L1a, L1, L2a, L2,  L3a, L3 = model(X, w, w2, w3, w4, w_o, showimg) #, dummy)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y))
 train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
@@ -117,10 +123,11 @@ test_indices = np.arange(len(teX)) # Get A Test Batch
 np.random.shuffle(test_indices)
 test_indices = test_indices[0:test_size]
 
+init = tf.initialize_all_variables()
 # Launch the graph in a session
 with tf.Session() as sess:
     # you need to initialize all variables
-    tf.initialize_all_variables().run()
+    sess.run(init)
  
     for i in range(10):
         training_batch = zip(range(0, len(trX), batch_size),
@@ -146,7 +153,7 @@ with tf.Session() as sess:
         L1a_val=result[1]
         L1_val=result[2]
         # will L1a_val reflect the change of weightings ?
-        print(i, np.mean(np.argmax(Y_val, axis=1) == argMax) )
+        print(i, np.mean(np.argmax(teY_val, axis=1) == argMax) )
  
         print type(X_val)
         print X_val.shape
@@ -154,5 +161,11 @@ with tf.Session() as sess:
         print L1_val.shape
         print '============================='
         
-        myplot(64, X_val, L1a_val, L1_val, 0, i)        
-        myplot(64, X_val, L1a_val, L1_val, 31, i)  
+        myplot(16, X_val, L1a_val, L1_val, 0, i, 1)        
+        myplot(16, X_val, L1a_val, L1_val, 31, i, 1)  
+
+        myplot(32, X_val, result[3], result[4], 0, i,2)        
+        myplot(32, X_val, result[3], result[4], 31, i, 2)  
+        
+        myplot(64, X_val, result[5], result[6], 0, i,3)        
+        myplot(64, X_val, result[5], result[6], 31, i, 3)  
