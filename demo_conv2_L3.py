@@ -26,7 +26,7 @@ def myplot(numFeatures,X_val, L1a_val, L_val, m, i):
         for k in range(0, numFeatures, step):
            ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(L1a_val[m,:,:,k])#, cmap='gray')
            ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L1_val[m,:,:,k])#, cmap='gray')
-        pyplot.savefig('t{0}L2_{1}.jpg'.format(m,i) )
+        pyplot.savefig('t{0}L3_{1}.jpg'.format(m,i) )
         # fig.close()
         
 #====================================
@@ -68,16 +68,16 @@ def model(X, w, w2, w3, w4, w_o):
     l2 = tf.nn.max_pool(l2a, ksize=[1, 2, 2, 1],              # l2 shape=(?, 7, 7, 32)
                         strides=[1, 2, 2, 1], padding='SAME')
     
-    #l3a = tf.nn.relu(tf.nn.conv2d(l2, w3,                     # l3a shape=(?, 7, 7, 128)
-    #                    strides=[1, 1, 1, 1], padding='SAME'))
-    #l3 = tf.nn.max_pool(l3a, ksize=[1, 2, 2, 1],              # l3 shape=(?, 4, 4, 128)
-    #                    strides=[1, 2, 2, 1], padding='SAME')
+    l3a = tf.nn.relu(tf.nn.conv2d(l2, w3,                     # l3a shape=(?, 7, 7, 64)
+                        strides=[1, 1, 1, 1], padding='SAME'))
+    l3 = tf.nn.max_pool(l3a, ksize=[1, 2, 2, 1],              # l3 shape=(?, 4, 4, 64)
+                        strides=[1, 2, 2, 1], padding='SAME')
     #l3 = tf.reshape(l3, [-1, w4.get_shape().as_list()[0]])    # reshape to (?, 2048)
-    l2_reshape = tf.reshape(l2, [-1, w4.get_shape().as_list()[0]])    # reshape to (?, 7*7*32)
+    l3_reshape = tf.reshape(l3, [-1, w4.get_shape().as_list()[0]])    # reshape to (?, 4*4*32)
     
-    l4 = tf.nn.relu(tf.matmul(l2_reshape, w4))
+    l4 = tf.nn.relu(tf.matmul(l3_reshape, w4))
     pyx = tf.matmul(l4, w_o)
-    return pyx, l2a, l2
+    return pyx, l3a, l3
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 trX, trY, teX, teY = mnist.train.images, mnist.train.labels, mnist.test.images, mnist.test.labels
@@ -86,23 +86,18 @@ teX = teX.reshape(-1, 28, 28, 1)  # 28x28x1 input img
 
 X = tf.placeholder("float", [None, 28, 28, 1])
 Y = tf.placeholder("float", [None, 10])
-showimg=tf.Variable(False) #xxx tf.placeholder('bool', False)
-i_tensor=tf.Variable(0)
-T=tf.constant(True)
+
 
 w = init_weights([3, 3, 1, 16])       # 3x3x1 conv, 16 outputs
-#w = init_weights([3, 3, 1, 16])       # 3x3x1 conv, 16 outputs
 w2 = init_weights([3, 3, 16, 32])     # 3x3x16 conv, 32 outputs
-#w3 = init_weights([3, 3, 64, 128])    # 3x3x32 conv, 128 outputs
+w3 = init_weights([3, 3, 32, 64])    # 3x3x32 conv, 64 outputs
 # w4 = init_weights([128 * 4 * 4, 625]) # FC 128 * 4 * 4 inputs, 625 outputs
-# w4 = init_weights([16 * 7 * 7, 32]) # FC 16 * 7 * 7 inputs, 64 outputs
-w4 = init_weights([32 * 7 * 7, 64]) # FC 16 * 14 * 14 inputs, 64 outputs
+w4 = init_weights([64 * 4 * 4, 128]) # FC 64 * 4 * 4 inputs, 128 outputs
 #w_o = init_weights([625, 10])         # FC 625 inputs, 10 outputs (labels)
-w_o = init_weights([64, 10])         # FC 128 inputs, 10 outputs (labels)
-#w2=[]
-w3=[]
+w_o = init_weights([128, 10])         # FC 128 inputs, 10 outputs (labels)
 
-py_x, L1a, L1 = model(X, w, w2, w3, w4, w_o)
+
+py_x, L3a, L3 = model(X, w, w2, w3, w4, w_o)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y))
 train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
@@ -117,14 +112,14 @@ test_indices = test_indices[0:test_size]
 with tf.Session() as sess:
     # you need to initialize all variables
     tf.initialize_all_variables().run()
-
-    for i in range(100):
+ 
+    for i in range(10):
         training_batch = zip(range(0, len(trX), batch_size),
                              range(batch_size, len(trX), batch_size))
         for start, end in training_batch:
             sess.run(train_op, feed_dict={X: trX[start:end], Y: trY[start:end] })
 
-        result=    sess.run([predict_op, L1a, L1], feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
+        result=    sess.run([predict_op, L3a, L3], feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
         argMax=result[0]
         """
         print '=== argMax ============='
@@ -132,17 +127,19 @@ with tf.Session() as sess:
         print len(argMax)
         """
         X_val=teX[test_indices]
+        Y_val=teY[test_indices]
+        print 'teY[0]= {0}'.format(Y_val[0])
+        
         L1a_val=result[1]
         L1_val=result[2]
         # will L1a_val reflect the change of weightings ?
-        print(i, np.mean(np.argmax(teY[test_indices], axis=1) == argMax) )
-                          # sess.run(predict_op, feed_dict={sess: sess, showimg:True, i_tensor: i, X: teX[test_indices],  Y: teY[test_indices]})))
-        
+        print(i, np.mean(np.argmax(Y_val, axis=1) == argMax) )
+ 
         print type(X_val)
         print X_val.shape
         print type(L1_val)
         print L1_val.shape
         print '============================='
         
-        myplot(32, X_val, L1a_val, L1_val, 0, i)        
-        myplot(32, X_val, L1a_val, L1_val, 31, i)  
+        myplot(64, X_val, L1a_val, L1_val, 0, i)        
+        myplot(64, X_val, L1a_val, L1_val, 31, i)  

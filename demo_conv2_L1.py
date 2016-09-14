@@ -10,7 +10,7 @@ from tensorflow.python.ops import control_flow_ops
 
 
 #=========
-def myplot(numFeatures,X_val, L1a_val, L_val, m, i):    
+def myplot(X_val, L1a_val, L_val, m, i):    
         #====================================
         print 'myplot to save the images' 
         # plot original image and first and second components of output
@@ -22,11 +22,10 @@ def myplot(numFeatures,X_val, L1a_val, L_val, m, i):
         
         # recall that the convOp output (filtered image) is actually a "minibatch",
         # of size 1 here, so we take index 0 in the first dimension:
-        step= numFeatures/8
-        for k in range(0, numFeatures, step):
-           ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(L1a_val[m,:,:,k])#, cmap='gray')
-           ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L1_val[m,:,:,k])#, cmap='gray')
-        pyplot.savefig('t{0}L2_{1}.jpg'.format(m,i) )
+        for k in range(0, 16,2):
+           ax=fig.add_subplot(3,8,k/2 +9); ax.axis('off'); pyplot.imshow(L1a_val[m,:,:,k])#, cmap='gray')
+           ax=fig.add_subplot(3,8,k/2 +17); ax.axis('off'); pyplot.imshow(L1_val[m,:,:,k])#, cmap='gray')
+        pyplot.savefig('t{0}L1_{1}.jpg'.format(m,i) )
         # fig.close()
         
 #====================================
@@ -63,21 +62,12 @@ def model(X, w, w2, w3, w4, w_o):
     #l1 = tf.nn.max_pool(l1a, ksize=[1, 4, 4, 1],              # l1 shape=(?, 7, 7, 16)
     #                    strides=[1, 4, 4, 1], padding='SAME')
 
-    l2a = tf.nn.relu(tf.nn.conv2d(l1, w2,                     # l2a shape=(?, 14, 14, 32)
-                        strides=[1, 1, 1, 1], padding='SAME'))
-    l2 = tf.nn.max_pool(l2a, ksize=[1, 2, 2, 1],              # l2 shape=(?, 7, 7, 32)
-                        strides=[1, 2, 2, 1], padding='SAME')
     
-    #l3a = tf.nn.relu(tf.nn.conv2d(l2, w3,                     # l3a shape=(?, 7, 7, 128)
-    #                    strides=[1, 1, 1, 1], padding='SAME'))
-    #l3 = tf.nn.max_pool(l3a, ksize=[1, 2, 2, 1],              # l3 shape=(?, 4, 4, 128)
-    #                    strides=[1, 2, 2, 1], padding='SAME')
-    #l3 = tf.reshape(l3, [-1, w4.get_shape().as_list()[0]])    # reshape to (?, 2048)
-    l2_reshape = tf.reshape(l2, [-1, w4.get_shape().as_list()[0]])    # reshape to (?, 7*7*32)
+    l1_reshape = tf.reshape(l1, [-1, w4.get_shape().as_list()[0]])    # reshape to (?, 7*7*32)
     
-    l4 = tf.nn.relu(tf.matmul(l2_reshape, w4))
+    l4 = tf.nn.relu(tf.matmul(l1_reshape, w4))
     pyx = tf.matmul(l4, w_o)
-    return pyx, l2a, l2
+    return pyx, l1a, l1
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 trX, trY, teX, teY = mnist.train.images, mnist.train.labels, mnist.test.images, mnist.test.labels
@@ -86,20 +76,13 @@ teX = teX.reshape(-1, 28, 28, 1)  # 28x28x1 input img
 
 X = tf.placeholder("float", [None, 28, 28, 1])
 Y = tf.placeholder("float", [None, 10])
-showimg=tf.Variable(False) #xxx tf.placeholder('bool', False)
-i_tensor=tf.Variable(0)
-T=tf.constant(True)
+
 
 w = init_weights([3, 3, 1, 16])       # 3x3x1 conv, 16 outputs
-#w = init_weights([3, 3, 1, 16])       # 3x3x1 conv, 16 outputs
-w2 = init_weights([3, 3, 16, 32])     # 3x3x16 conv, 32 outputs
-#w3 = init_weights([3, 3, 64, 128])    # 3x3x32 conv, 128 outputs
-# w4 = init_weights([128 * 4 * 4, 625]) # FC 128 * 4 * 4 inputs, 625 outputs
-# w4 = init_weights([16 * 7 * 7, 32]) # FC 16 * 7 * 7 inputs, 64 outputs
-w4 = init_weights([32 * 7 * 7, 64]) # FC 16 * 14 * 14 inputs, 64 outputs
+w4 = init_weights([16 * 14 * 14, 32]) # FC 16 * 14 * 14 inputs, 64 outputs
 #w_o = init_weights([625, 10])         # FC 625 inputs, 10 outputs (labels)
-w_o = init_weights([64, 10])         # FC 128 inputs, 10 outputs (labels)
-#w2=[]
+w_o = init_weights([32, 10])         # FC 128 inputs, 10 outputs (labels)
+w2=[]
 w3=[]
 
 py_x, L1a, L1 = model(X, w, w2, w3, w4, w_o)
@@ -108,10 +91,8 @@ cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y))
 train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
 predict_op = tf.argmax(py_x, 1)
 
-#randomly choose 256 images from test data
-test_indices = np.arange(len(teX)) # Get A Test Batch
-np.random.shuffle(test_indices)
-test_indices = test_indices[0:test_size]
+
+
 
 # Launch the graph in a session
 with tf.Session() as sess:
@@ -124,6 +105,9 @@ with tf.Session() as sess:
         for start, end in training_batch:
             sess.run(train_op, feed_dict={X: trX[start:end], Y: trY[start:end] })
 
+        test_indices = np.arange(len(teX)) # Get A Test Batch
+        np.random.shuffle(test_indices)
+        test_indices = test_indices[0:test_size]
         result=    sess.run([predict_op, L1a, L1], feed_dict={X: teX[test_indices],  Y: teY[test_indices]})
         argMax=result[0]
         """
@@ -144,5 +128,5 @@ with tf.Session() as sess:
         print L1_val.shape
         print '============================='
         
-        myplot(32, X_val, L1a_val, L1_val, 0, i)        
-        myplot(32, X_val, L1a_val, L1_val, 31, i)  
+        myplot(X_val, L1a_val, L1_val, 0, i)        
+        myplot(X_val, L1a_val, L1_val, 31, i)  
