@@ -21,14 +21,14 @@ def myplot(numFeatures,X_val, La_val, L_val, m, i, layer):
         fig = pyplot.figure()
         ax = fig.add_subplot(3,8,1)
         ax.axis('off');
-        pyplot.imshow(X_val[m,:,:,0]) #, cmap='gray')
+        pyplot.imshow(X_val[m,:,:,0], cmap='gray')
         
         # recall that the convOp output (filtered image) is actually a "minibatch",
         # of size 1 here, so we take index 0 in the first dimension:
         step= numFeatures/8
         for k in range(0, numFeatures, step):
-           ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(La_val[m,:,:,k])#, cmap='gray')
-           ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L_val[m,:,:,k])#, cmap='gray')
+           ax=fig.add_subplot(3,8,k/step +9); ax.axis('off'); pyplot.imshow(La_val[m,:,:,k], cmap='gray')
+           ax=fig.add_subplot(3,8,k/step +17); ax.axis('off'); pyplot.imshow(L_val[m,:,:,k], cmap='gray')
         pyplot.savefig('t{0}L{1}_{2}.jpg'.format(m,layer,i) )
         # fig.close()
         

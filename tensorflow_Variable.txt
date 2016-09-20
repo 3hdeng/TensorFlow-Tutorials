@@ -1,3 +1,18 @@
+# Create a variable with a random value.
+weights = tf.Variable(tf.random_normal([784, 200], stddev=0.35),
+                      name="weights")
+# Create another variable with the same value as 'weights'.
+w2 = tf.Variable(weights.initialized_value(), name="w2")
+# Create another variable with twice the value of 'weights'
+w_twice = tf.Variable(weights.initialized_value() * 2.0, name="w_twice")
+
+
+https://www.tensorflow.org/versions/r0.10/api_docs/python/state_ops.html
+
+
+
+
+//===
 https://www.tensorflow.org/versions/r0.9/how_tos/variables/index.html
 
 use variables to hold and update parameters. 
