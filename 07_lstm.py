@@ -1,6 +1,7 @@
 #Inspired by https://github.com/aymericdamien/TensorFlow-Examples/blob/master/examples/3%20-%20Neural%20Networks/recurrent_network.py
 import tensorflow as tf
-from tensorflow.models.rnn import rnn, rnn_cell
+#from tensorflow.models.rnn import rnn, rnn_cell
+# --> tf.nn.rnn, tf.nn.rnn_cell
 
 import numpy as np
 import input_data
@@ -32,23 +33,27 @@ def init_weights(shape):
     return tf.Variable(tf.random_normal(shape, stddev=0.01))
 
 
-def model(X, W, B, init_state, lstm_size):
-    # X, input shape: (batch_size, input_vec_size, time_step_size)
+def model(X, W, B, lstm_size):
+    # rm parm: init_state
+    # X, input shape: (batch_size, time_step_size, input_vec_size)
     XT = tf.transpose(X, [1, 0, 2])  # permute time_step_size and batch_size
-    # XT shape: (input_vec_size, batch_szie, time_step_size)
+    # XT shape: (time_step_size, batch_size, input_vec_size)
     XR = tf.reshape(XT, [-1, lstm_size]) # each row has input for each lstm cell (lstm_size)
     # XR shape: (input vec_size, batch_size)
     X_split = tf.split(0, time_step_size, XR) # split them to time_step_size (28 arrays)
     # Each array shape: (batch_size, input_vec_size)
 
     # Make lstm with lstm_size (each input vector size)
-    lstm = rnn_cell.BasicLSTMCell(lstm_size, forget_bias=1.0)
+    # xxx lstm = rnn_cell.BasicLSTMCell(lstm_size, forget_bias=1.0)
+    lstm = tf.nn.rnn_cell.BasicLSTMCell(lstm_size, forget_bias=1.0, state_is_tuple=True)
 
     # Get lstm cell output, time_step_size (28) arrays with lstm_size output: (batch_size, lstm_size)
-    outputs, _states = rnn.rnn(lstm, X_split, initial_state=init_state)
+    # xxx outputs, _states = rnn.rnn(lstm, X_split, initial_state=init_state)
+    outputs, _states = tf.nn.rnn(lstm, X_split, dtype=tf.float32)
+    # outputs is a length T list of outputs (one for each input),   or a nested tuple of such elements.
 
     # Linear activation
-    # Get the last output
+    # Get the last output by List[-1] --> 128 x 28 , batch_size x lstm_size
     return tf.matmul(outputs[-1], W) + B, lstm.state_size # State size to initialize the stat
 
 mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
@@ -57,7 +62,7 @@ trX = trX.reshape(-1, 28, 28)
 teX = teX.reshape(-1, 28, 28)
 
 # Tensorflow LSTM cell requires 2x n_hidden length (state & cell)
-init_state = tf.placeholder("float", [None, 2*lstm_size])
+# init_state = tf.placeholder("float", [None, 2*lstm_size])
 
 X = tf.placeholder("float", [None, 28, 28])
 Y = tf.placeholder("float", [None, 10])
@@ -66,7 +71,7 @@ Y = tf.placeholder("float", [None, 10])
 W = init_weights([lstm_size, 10])
 B = init_weights([10])
 
-py_x, state_size = model(X, W, B, init_state, lstm_size)
+py_x, state_size = model(X, W, B, lstm_size)
 
 cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(py_x, Y))
 train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
@@ -79,14 +84,25 @@ with tf.Session() as sess:
 
     for i in range(100):
         for start, end in zip(range(0, len(trX), batch_size), range(batch_size, len(trX), batch_size)):
-            sess.run(train_op, feed_dict={X: trX[start:end], Y: trY[start:end],
-                                          init_state: np.zeros((batch_size, state_size))})
+            sess.run(train_op, feed_dict={X: trX[start:end], Y: trY[start:end]})
+            #init_state: np.zeros((batch_size, state_size))})
 
+        pyx_val= sess.run(py_x, feed_dict={X: trX[start:end], Y: trY[start:end]})
+        print pyx_val.shape
+        
         test_indices = np.arange(len(teX))  # Get A Test Batch
         np.random.shuffle(test_indices)
         test_indices = test_indices[0:test_size]
 
         print(i, np.mean(np.argmax(teY[test_indices], axis=1) ==
                          sess.run(predict_op, feed_dict={X: teX[test_indices],
-                                                         Y: teY[test_indices],
-                                                         init_state: np.zeros((test_size, state_size))})))
+                                                         Y: teY[test_indices]}) ))
+                                                         #init_state: np.zeros((test_size, state_size))})))
+
+
+#=========== errors collection ================
+"""
+ File "07_lstm.py", line 87, in <module>
+    init_state: np.zeros((batch_size, state_size))})
+TypeError: an integer is required
+"""
