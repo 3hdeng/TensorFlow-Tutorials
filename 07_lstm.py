@@ -87,8 +87,8 @@ with tf.Session() as sess:
             sess.run(train_op, feed_dict={X: trX[start:end], Y: trY[start:end]})
             #init_state: np.zeros((batch_size, state_size))})
 
-        pyx_val= sess.run(py_x, feed_dict={X: trX[start:end], Y: trY[start:end]})
-        print pyx_val.shape
+        #pyx_val= sess.run(py_x, feed_dict={X: trX[start:end], Y: trY[start:end]})
+        #print pyx_val.shape
         
         test_indices = np.arange(len(teX))  # Get A Test Batch
         np.random.shuffle(test_indices)

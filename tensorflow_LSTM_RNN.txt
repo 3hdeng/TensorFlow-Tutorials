@@ -1,5 +1,36 @@
 //===
 from tensorflow.models.rnn import rnn, rnn_cell
+or 
+tf.nn.rnn ,  tf.nn.rnn_cell
+
+lstm cell size === number of memory cells 
+time step size === rolled out count of iterations === number of loops
+x_0, x_1, ... , x_t, x_{t+1}, ... x_end
+
+
+//=== cell.state_size
+http://stackoverflow.com/questions/36732877/about-lstm-cell-state-size
+To compute an LSTM step you need to apply four functions each with dimension hidden_size:
+
+- input gate
+- output gate
+- forget gate
+- hidden state
+
+so you need hidden_size * 4 = 200 * 4 = 800
+
+the 30 comes from your batch size, as you are processing 30 samples per batch.
+
+and that is your cell memory consumption (30 x 800)
+
+--> FICO
+F: forget gate, W_f
+I: input gate, W_i
+C: cell gate, W_c
+O: output gate, W_o
+
+[Q] difference between sigmoid and tanh?
+[Q] W_f, W_i, W_c, W_o are shared(the same value) among all cells ?
 
 //===
 tensorflow tutorial + LSTM
@@ -8,6 +39,7 @@ tensorflow tutorial + LSTM
 * [2014] http://arxiv.org/pdf/1409.2329v5.pdf
 (how to correctly apply dropout to LSTMs)
 
+* http://deeplearning.net/tutorial/lstm.html
 
 
 Recurrent neural networks address this issue. 

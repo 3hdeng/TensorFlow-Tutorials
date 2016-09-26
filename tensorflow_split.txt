@@ -1,0 +1,29 @@
+https://www.tensorflow.org/versions/r0.10/api_docs/python/array_ops.html#split
+
+tf.split(split_dim, num_split, value, name='split')
+
+Splits a tensor into num_split tensors along one dimension.
+
+
+For example:
+
+# 'value' is a tensor with shape [5, 30]
+# Split 'value' into 3 tensors along dimension 1
+split0, split1, split2 = tf.split(1, 3, value)
+tf.shape(split0) ==> [5, 10]
+Note: If you are splitting along an axis by the length of that axis, consider using unpack, e.g.
+
+num_items = t.get_shape()[axis].value
+[tf.squeeze(s, [axis]) for s in tf.split(axis, num_items, t)]
+can be rewritten as
+
+tf.unpack(t, axis=axis)
+Args:
+
+split_dim: A 0-D int32 Tensor. The dimension along which to split. Must be in the range [0, rank(value)).
+num_split: A Python integer. The number of ways to split.
+value: The Tensor to split.
+name: A name for the operation (optional).
+Returns:
+
+num_split Tensor objects resulting from splitting value.
