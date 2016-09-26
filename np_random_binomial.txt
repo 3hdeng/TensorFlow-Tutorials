@@ -1,0 +1,45 @@
+numpy.random.binomial
+
+numpy.random.binomial(n, p, size=None)
+Draw samples from a binomial distribution.
+
+Samples are drawn from a binomial distribution with specified parameters, n trials and p probability of success where n an integer >= 0 and p is in the interval [0,1]. (n may be input as a float, but it is truncated to an integer in use)
+
+Parameters:	
+n : float (but truncated to an integer)
+parameter, >= 0.
+p : float
+parameter, >= 0 and <=1.
+size : int or tuple of ints, optional
+Output shape. If the given shape is, e.g., (m, n, k), then m * n * k samples are drawn. Default is None, in which case a single value is returned.
+
+Returns:	
+samples : ndarray or scalar
+where the values are all integers in [0, n].
+
+//===
+When estimating the standard error of a proportion in a population 
+by using a random sample, the normal distribution works well unless the product p*n <=5, 
+where p = population proportion estimate, and n = number of samples, 
+in which case the binomial distribution is used instead. 
+
+For example, a sample of 15 people shows 4 who are left handed, and 11 who are right handed. 
+Then p = 4/15 = 27%. 0.27*15 = 4, so the binomial distribution should be used in this case.
+
+
+//===
+>>> import numpy
+>>> numpy.power(0.9,9)
+0.38742048900000009
+
+>>> x=numpy.random.binomial(7, 0.1,4)
+>>> print x
+[0 0 0 1]
+
+the last arg determine the  output shape/size
+the values are all integers in [0, n].
+n is the 1st arg, which means the number of trials,
+the output value is the number of success, which is at most n
+
+//=== use binomial output as mask, success/1 pass, failure/0 reject
+mask_np = np.random.binomial(1, 1 - corruption_level, input_.shape)

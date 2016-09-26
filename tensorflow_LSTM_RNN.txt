@@ -1,0 +1,105 @@
+//===
+from tensorflow.models.rnn import rnn, rnn_cell
+
+//===
+tensorflow tutorial + LSTM
+* https://www.tensorflow.org/versions/r0.10/tutorials/recurrent/index.html
+* [2015.08.27] http://colah.github.io/posts/2015-08-Understanding-LSTMs/
+* [2014] http://arxiv.org/pdf/1409.2329v5.pdf
+(how to correctly apply dropout to LSTMs)
+
+
+
+Recurrent neural networks address this issue. 
+They are networks with loops in them, allowing information to persist.
+
+This chain-like nature reveals that recurrent neural networks are intimately related to 
+sequences and lists. 
+They’re the natural architecture of neural network to use for such data.
+
+
+Andrej Karpathy’s excellent blog post, 
+he Unreasonable Effectiveness of Recurrent Neural Networks.
+But they really are pretty amazing.
+http://karpathy.github.io/2015/05/21/rnn-effectiveness/
+
+“LSTMs,” a very special kind of recurrent neural network which works, 
+for many tasks, much much better than the standard version
+
+
+“long-term dependencies.” 
+LSTMs don’t have this problem!?
+
+1997,
+"Long Short Term Memory networks" 
+ – usually just called “LSTMs” – are a special kind of RNN, 
+capable of learning long-term dependencies. 
+They were introduced by Hochreiter & Schmidhuber (1997), and were refined and popularized 
+by many people in following work...
+
+LSTMs are explicitly designed to avoid the long-term dependency problem.
+*** Remembering information for long periods of time is practically their default behavior,
+
+LSTMs also have this chain like structure, but the repeating module has a different structure.
+Instead of having a single neural network layer, there are four, 
+interacting in a very special way.
+
+
+A slightly more dramatic variation on the LSTM is the Gated Recurrent Unit, or GRU, 
+introduced by Cho, et al. (2014). 
+It combines the forget and input gates into a single “update gate.” 
+It also merges the cell state and hidden state, and makes some other changes.
+
+
+//=== data for tensorflow rnn tutorial
+http://www.fit.vutbr.cz/~imikolov/rnnlm/simple-examples.tgz
+
+https://www.tensorflow.org/versions/r0.10/tutorials/recurrent/index.html
+the core of the model consists of an LSTM cell that processes one word at a time and computes probabilities of the possible continuations of the sentence. The memory state of the network is initialized with a vector of zeros and gets updated after reading each word. Also, for computational reasons, we will process data in mini-batches of size batch_size.
+
+The basic pseudocode looks as follows:
+
+lstm = rnn_cell.BasicLSTMCell(lstm_size)
+# Initial state of the LSTM memory.
+state = tf.zeros([batch_size, lstm.state_size])
+
+loss = 0.0
+for current_batch_of_words in words_in_dataset:
+    # The value of state is updated after processing each batch of words.
+    output, state = lstm(current_batch_of_words, state)
+
+    # The LSTM output can be used to make next word predictions
+    logits = tf.matmul(output, softmax_w) + softmax_b
+    probabilities = tf.nn.softmax(logits)
+    loss += loss_function(probabilities, target_words)
+
+
+*** truncated backpropagation
+A simplified version of the code for the graph creation for truncated backpropagation:
+
+# Placeholder for the inputs in a given iteration.
+words = tf.placeholder(tf.int32, [batch_size, num_steps])
+
+lstm = rnn_cell.BasicLSTMCell(lstm_size)
+# Initial state of the LSTM memory.
+initial_state = state = tf.zeros([batch_size, lstm.state_size])
+
+for i in range(num_steps):
+    # The value of state is updated after processing each batch of words.
+    output, state = lstm(words[:, i], state)
+
+    # The rest of the code.
+    # ...
+
+final_state = state
+And this is how to implement an iteration over the whole dataset:
+
+# A numpy array holding the state of LSTM after each batch of words.
+numpy_state = initial_state.eval()
+total_loss = 0.0
+for current_batch_of_words in words_in_dataset:
+    numpy_state, current_loss = session.run([final_state, loss],
+        # Initialize the LSTM state from the previous iteration.
+        feed_dict={initial_state: numpy_state, words: current_batch_of_words})
+    total_loss += current_loss
+Inputs

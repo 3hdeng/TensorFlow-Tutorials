@@ -1,0 +1,60 @@
+//=== http://neuralnetworksanddeeplearning.com/chap2.html
+The goal of backpropagation is to compute the partial derivatives
+ ∂C/∂w and ∂C/∂b of the cost function C with respect to any weight w or bias b in the network
+ 
+
+The backpropagation algorithm was originally introduced in the 1970s, 
+but its importance wasn't fully appreciated until a famous 1986 paper by David Rumelhart, Geoffrey Hinton, and Ronald Williams. 
+That paper describes several neural networks where backpropagation works far faster 
+than earlier approaches to learning, 
+making it possible to use neural nets to solve problems which had previously been insoluble. 
+
+backpropagation isn't just a fast algorithm for learning. 
+It actually gives us detailed insights into how changing the weights and biases 
+changes the overall behaviour of the network.
+
+One quirk of the notation is the ordering of the j and k indices. 
+You might think that it makes more sense to use j to refer to the input neuron, and k to the output neuron, 
+not vice versa, as is actually done. 
+I'll explain the reason for this quirk below.
+
+w_jk^l , w(j,k,l) , from the k-th neuron at layer (l-1) to the jth neuron at layer l
+
+http://neuralnetworksanddeeplearning.com/chap2.html
+
+ rewritten in the beautiful and compact vectorized form
+a^l=σ(w^l * a^(l−1) + b^l)
+z^l=w^l * a^(l−1) + b^l 
+a^l=σ(z^l)
+
+
+This expression gives us a much more global way of thinking about 
+how the activations in one layer relate to activations in the previous layer: 
+we just apply the weight matrix to the activations, then add the bias vector, 
+and finally apply the σσ function
+
+the input training example x is fixed, and so the output y is also a fixed parameter. 
+In particular, it's not something we can modify by changing the weights and biases in any way, 
+i.e., it's not something which the neural network learns.
+
+so it makes sense to regard CC as a function of the output activations aLaL alone, with yy merely a parameter that helps define that function.
+
+This kind of elementwise multiplication is sometimes called the Hadamard product or Schur product.
+
+
+
+
+//===
+In what sense is backpropagation a fast algorithm? To answer this question, let's consider another approach to computing the gradient. Imagine it's the early days of neural networks research. Maybe it's the 1950s or 1960s, and you're the first person in the world to think of using gradient descent to learn! But to make the idea work you need a way of computing the gradient of the cost function. You think back to your knowledge of calculus, and decide to see if you can use the chain rule to compute the gradient. But after playing around a bit, 
+the algebra looks complicated, and you get discouraged.
+
+
+Unfortunately, while this approach appears promising, when you implement the code it turns out to be extremely slow. To understand why, imagine we have a million weights in our network. Then for each distinct weight wjwj we need to compute C(w+ϵej)C(w+ϵej) in order to compute ∂C/∂wj∂C/∂wj. That means that to compute the gradient we need to compute the cost function a million different times, requiring a million forward passes through the network (per training example). We need to compute C(w)C(w) as well, 
+so that's a total of a million and one passes through the network.
+
+*** What's clever about backpropagation is that it enables us to simultaneously compute all the partial derivatives ∂C/∂wj∂C/∂wj using just one forward pass through the network, followed by one backward pass through the network. Roughly speaking, the computational cost of the backward pass is about the same as the forward pass* *This should be plausible, but it requires some analysis to make a careful statement. It's plausible because the dominant computational cost in the forward pass is multiplying by the weight matrices, while in the backward pass it's multiplying by the transposes of the weight matrices. These operations obviously have similar computational cost.. And so the total cost of backpropagation is roughly the same as making just two forward passes through the network. 
+
+ even though backpropagation appears superficially more complex than the approach based on (46), 
+ it's actually much, much faster.
+ 
+ 
