@@ -6,16 +6,16 @@ a=np.array( [[[1, 1, 1], [2, 2, 2]],
         [[50, 51, 52], [60, 61, 62]]
         ] )
 t= tf.convert_to_tensor(a, dtype=tf.int32)
-x = tf.Variable(0, name='x')
+print(t.get_shape())
 
+u= tf.unpack(t) 
+# return The list of Tensor objects unpacked from value.
+# xxx print(u.get_shape())
+print("u= ", u)
+print("=====  session run ======")
 model = tf.initialize_all_variables()
 
 with tf.Session() as session:
     session.run(model)
     print(session.run(t))
-    
-    for i in range(5):
-        #session.run(model)
-        x = x + 1
-        #print(x)
-        print(session.run(x))
+    print(session.run(u))

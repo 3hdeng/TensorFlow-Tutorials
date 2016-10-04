@@ -41,7 +41,16 @@ tensorflow tutorial + LSTM
 
 * http://deeplearning.net/tutorial/lstm.html
 
+//=== class tf.nn.rnn_cell.LSTMCell
+https://www.tensorflow.org/versions/r0.10/api_docs/python/rnn_cell.html#BasicLSTMCell
+The peephole implementation is based on:
+* https://research.google.com/pubs/archive/43905.pdf
+Hasim Sak, Andrew Senior, and Francoise Beaufays. "Long short-term memory recurrent neural network architectures for large scale acoustic modeling." INTERSPEECH, 2014.
+The class uses optional peep-hole connections, optional cell clipping, and an optional projection layer.
 
+
+
+//===
 Recurrent neural networks address this issue. 
 They are networks with loops in them, allowing information to persist.
 

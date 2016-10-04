@@ -2,6 +2,11 @@
 init_state = tf.placeholder("float", [None, 2*lstm_size])
 
 
+https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/rnn_cell.py
+https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/rnn.py
+
+
+
 //=== https://www.tensorflow.org/versions/r0.9/api_docs/python/rnn_cell.html
 Neural Network RNN Cells
 Base interface for all RNN Cells
