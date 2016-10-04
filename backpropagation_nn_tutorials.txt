@@ -1,0 +1,18 @@
+2015.09
+http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/
+
+RNN are typically used as part of Machine Translation systems. Secondly, a language model allows us to generate new text (I think that’s the much cooler application).
+Training a language model on Shakespeare allows us to generate Shakespeare-like text. 
+
+Another way to think about RNNs is that they have a “memory” which captures information about what has been calculated so far.
+
+unrolling we simply mean that we write out the network for the complete sequence. F
+or example, if the sequence we care about is a sentence of 5 words, 
+the network would be unrolled into a 5-layer neural network, one layer for each word
+
+
+//=== IMPLEMENTING A NEURAL NETWORK FROM SCRATCH IN PYTHON
+http://www.wildml.com/2015/09/implementing-a-neural-network-from-scratch/
+
+backpropagation
+http://colah.github.io/posts/2015-08-Backprop/
