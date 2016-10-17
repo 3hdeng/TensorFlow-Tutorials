@@ -52,11 +52,13 @@ for i in range(2,16):
     
 print W.shape
 
-W=np.asmatrix(W)
+W=np.asmatrix(W/np.sqrt(N))
 #t=np.dot(W,W.transpose())
 t=np.dot(W,W.getH())
-print t
+print np.rint(t)
 
+
+    
 
 for i in range(100000):
  x=np.random.uniform(-1,1, 16)
