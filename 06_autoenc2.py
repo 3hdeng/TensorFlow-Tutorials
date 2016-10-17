@@ -32,16 +32,16 @@ W_prime = tf.transpose(W)  # tied weights between encoder and decoder
 b_prime = tf.Variable(tf.zeros([n_visible]), name='b_prime')
 
 
-def model(X, mask, W, b, W_prime, b_prime):
-    tilde_X = mask * X  # corrupted X
-    Y = tf.nn.sigmoid(tf.matmul(tilde_X, W) + b)  # hidden state
-    # orgY = tf.nn.sigmoid(tf.matmul(X, W) + b)  # hidden state
-    # Y= mask2*orgY # corrupted orgY
+def model(X, mask2, W, b, W_prime, b_prime):
+    # tilde_X = mask * X  # corrupted X
+    # Y = tf.nn.sigmoid(tf.matmul(tilde_X, W) + b)  # hidden state
+    orgY = tf.nn.sigmoid(tf.matmul(X, W) + b)  # hidden state
+    Y= mask2*orgY # corrupted orgY
     Z = tf.nn.sigmoid(tf.matmul(Y, W_prime) + b_prime)  # reconstructed input
     return Z
 
 # build model graph
-Z = model(X, mask, W, b, W_prime, b_prime)
+Z = model(X, mask2, W, b, W_prime, b_prime)
 
 # create cost function
 cost = tf.reduce_sum(tf.pow(X - Z, 2))  # minimize squared error
@@ -59,9 +59,9 @@ with tf.Session() as sess:
     for i in range(100):
         for start, end in zip(range(0, len(trX), 128), range(128, len(trX), 128)):
             input_ = trX[start:end]
-            mask_np = np.random.binomial(1, 1 - corruption_level, input_.shape)
-            sess.run(train_op, feed_dict={X: input_, mask: mask_np})
+            mask_np = np.random.binomial(1, 1 - corruption_level, (input_.shape[0], n_hidden))
+            sess.run(train_op, feed_dict={X: input_, mask2: mask_np})
 
-        mask_np = np.random.binomial(1, 1 - corruption_level, teX.shape)
-        print(i, sess.run(cost, feed_dict={X: teX, mask: mask_np}))
+        mask_np = np.random.binomial(1, 1 - corruption_level, (teX.shape[0], n_hidden))
+        print(i, sess.run(cost, feed_dict={X: teX, mask2: mask_np}))
 
