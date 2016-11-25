@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 import os
 from tensorflow.python.platform import gfile
+from google.protobuf import text_format
 
 trX = np.linspace(-1, 1, 101)
 #trX=trX.astype(np.float32)
@@ -48,19 +49,19 @@ with tf.Session() as sess:
     for i in range(2): # number of epochs
         for (x, y) in zip(trX, trY): # 101 data points per train_op
             sess.run(train_op, feed_dict={X: x, Y: y})
-            w_val, cost_val=sess.run([w,cost], feed_dict={X: x, Y: y})  
+            # w_val, cost_val=sess.run([w,cost], feed_dict={X: x, Y: y})  
             # print(sess.run(cost))
             # xxx print(w.eval(feed_dict={X:x, Y:y}))
-            # ??? w_val = w.eval({X: x, Y: y}, sess)
-            print(w_val)
-            #print(cost_val)
+            # w_val = w.eval({X:x,Y:y}, sess)
+            w_val=w.eval(sess)
+            #print(w_val)
+            
+    #print(cost_val)
+    print(w_val)
 
-"""    
     # os.system("rm -rf /tmp/load")
     # tf.train.write_graph(sess.graph_def, "/tmp/load", "test.pb", False) 
     tf.train.write_graph(sess.graph_def,"", "gd1.pbtxt", True)
-    # now set the data:
-    # result,_=sess.run([output1,do_save], {input1: data}) 
     saver = tf.train.Saver(tf.all_variables())
     saver.save(sess,"chkpt1.data")
 
@@ -69,7 +70,8 @@ with tf.Session() as sess2:
      print("load graph")
      with gfile.FastGFile("gd1.pbtxt",'r') as f:
         graph_def = tf.GraphDef()
-        graph_def.ParseFromString(f.read())
+        # graph_def.ParseFromString(f.read())
+        text_format.Merge(f.read(), graph_def)
         sess2.graph.as_default() # default graph, the current active graph
         tf.import_graph_def(graph_def, name='')
 
@@ -84,7 +86,7 @@ with tf.Session() as sess2:
      except:pass
      print("load data")
      saver.restore(sess2, "chkpt1.data")  # now OK
-     print(cost2.eval())
+     print(cost2.eval({X:0.8, Y:1.8}, sess2))
+     print(w2.eval({X:0.8, Y:1.8}, sess2))
      print("DONE")
 
-"""     
