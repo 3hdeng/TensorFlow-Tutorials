@@ -86,7 +86,7 @@ pyplot.imshow(img, cmap='gray')
 
 # recall that the convOp output (filtered image) is actually a "minibatch",
 # of size 1 here, so we take index 0 in the first dimension:
-ax=fig.add_subplot(132); ax.axis('off'); pyplot.imshow(filtered_img[0, 0, :, :])
-ax=fig.add_subplot(133); ax.axis('off'); pyplot.imshow(filtered_img[0, 1, :, :])
+ax=fig.add_subplot(132); ax.axis('off'); pyplot.imshow(filtered_img[0, 0, :, :], cmap='gray')
+ax=fig.add_subplot(133); ax.axis('off'); pyplot.imshow(filtered_img[0, 1, :, :], cmap='gray')
 #pylab.show()
-pyplot.savefig('lenet_ex1.png')
+pyplot.savefig('lenet_ex2.jpg')

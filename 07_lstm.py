@@ -51,7 +51,7 @@ def model(X, W, B, lstm_size):
     # xxx outputs, _states = rnn.rnn(lstm, X_split, initial_state=init_state)
     outputs, _states = tf.nn.rnn(lstm, X_split, dtype=tf.float32)
     # outputs is a length T list of outputs (one for each input),   or a nested tuple of such elements.
-
+    # 28x128x28
     # Linear activation
     # Get the last output by List[-1] --> 128 x 28 , batch_size x lstm_size
     return tf.matmul(outputs[-1], W) + B, lstm.state_size # State size to initialize the stat
